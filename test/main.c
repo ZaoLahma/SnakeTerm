@@ -1,4 +1,5 @@
 #include "../inc/game_input_handler.h"
+#include "../inc/game_schd.h"
 #include "../inc/thread_pool.h"
 #include <stdio.h>
 #include <unistd.h>
@@ -11,15 +12,7 @@ int main(void)
 	
 	initInputHandler(threadContext);
 	
-	for(;;)
-	{
-		char key = getKey();
-		if((INPUT_HANDLER_KEY_INVALID) != key)
-		{
-			printf("%c\n", key);
-		}
-		usleep(1000000);
-	}
+	gameMain();
 	
 	return 0;
 }
