@@ -1,6 +1,6 @@
 CCOMMAND = gcc
 CFLAGS = -Wall -c -Wextra -g
-LINKARGS = -lpthread -lwiringPi
+LINKARGS = -lpthread
 SOURCES = $(wildcard src/*.c src/*/*.c)
 TEST_SOURCES = $(wildcard test/*.c)
 OBJECTS = $(SOURCES:.c=.o)

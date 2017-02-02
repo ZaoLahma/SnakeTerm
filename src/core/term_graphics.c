@@ -7,16 +7,20 @@
 static char graphicsBuf[((GRAPHICS_X_SIZE) * (GRAPHICS_Y_SIZE)) + (GRAPHICS_Y_SIZE)];
 
 
-void termGraphicsDraw(void)
+void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
 {
 	unsigned int displayLength = ((GRAPHICS_X_SIZE) * (GRAPHICS_Y_SIZE));
 	unsigned int i;
 	unsigned int rowIndex = 0;
 	
-	for(i = 0; i < displayLength; i++)
+	for(i = 0; i < noOfEntities; ++i)
 	{
-		graphicsBuf[i] = 'x';
-		
+		unsigned int bufIndex = (GRAPHICS_X_SIZE) * graphics[i].yCoord + graphics[i].xCoord;
+		graphicsBuf[bufIndex] = graphics[i].appearance;
+	}
+	
+	for(i = 0; i < displayLength; i++)
+	{	
 		if(rowIndex == (GRAPHICS_X_SIZE) - 1u)
 		{
 			rowIndex = 0;
@@ -24,11 +28,9 @@ void termGraphicsDraw(void)
 		}
 		else
 		{
-			/* Find out if any game object coord corresponds 
-			 * to this coord and print here */
 			rowIndex++;
 		}
 	}
 	
-	printf("\033[2J%s\n\n", graphicsBuf);
+	printf("\033[2J%s", graphicsBuf);
 }
