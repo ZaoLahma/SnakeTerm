@@ -31,7 +31,11 @@ void gameMain()
 	{
 		termGraphicsDraw(graphics, 200);
 		
-		(void)getKey();
+		char key = getKey();
+		if('s' == key)
+		{
+			running = 0u;
+		}
 		
 		usleep(1000000);
 	}

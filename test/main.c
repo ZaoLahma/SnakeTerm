@@ -14,5 +14,9 @@ int main(void)
 	
 	gameMain();
 	
+	stopInputHandler();
+	
+	destroy_thread_pool(threadContext);
+	
 	return 0;
 }

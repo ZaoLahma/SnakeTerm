@@ -7,6 +7,8 @@
 
 void initInputHandler(struct ThreadContext* threadContext);
 
+void stopInputHandler(void);
+
 char getKey(void);
 
 #endif

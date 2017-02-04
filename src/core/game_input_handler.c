@@ -25,8 +25,6 @@ static void* inputHandlerMain(void* arg)
 		}
 	}
 	
-	resetTermios();
-	
 	return arg;
 }
 
@@ -53,6 +51,12 @@ void initInputHandler(struct ThreadContext* threadContext)
 	running = 1u;
 	
 	sched_job(threadContext, inputHandlerMain, 0);
+}
+
+void stopInputHandler(void)
+{
+	running = 0u;
+	resetTermios();	
 }
 
 char getKey()
