@@ -7,11 +7,10 @@ static char currKey;
 static struct termios old_term;
 static struct termios new_term;
 
-static void* inputHandlerMain(void*);
 static void initTermios(void);
 static void resetTermios(void);
 
-static void* inputHandlerMain(void* arg)
+void* inputHandlerMain(void* arg)
 {
 	printf("inputHandlerMain running\n");
 	
@@ -42,15 +41,13 @@ static void resetTermios(void)
   tcsetattr(0, TCSANOW, &old_term);
 }
 
-void initInputHandler(struct ThreadContext* threadContext)
+void initInputHandler(void)
 {	
 	initTermios();
 	
 	currKey = (INPUT_HANDLER_KEY_INVALID);
 	
 	running = 1u;
-	
-	sched_job(threadContext, inputHandlerMain, 0);
 }
 
 void stopInputHandler(void)

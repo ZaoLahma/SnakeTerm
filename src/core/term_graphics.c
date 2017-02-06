@@ -1,10 +1,9 @@
 #include "../../inc/term_graphics.h"
 #include <stdio.h>
 
-#define GRAPHICS_Y_SIZE (10u)
-#define GRAPHICS_X_SIZE (20u)
+#define GRAPHICS_BUF_SIZE ((GRAPHICS_X_SIZE) * (GRAPHICS_Y_SIZE)) + (GRAPHICS_Y_SIZE)
 
-static char graphicsBuf[((GRAPHICS_X_SIZE) * (GRAPHICS_Y_SIZE)) + (GRAPHICS_Y_SIZE)];
+static char graphicsBuf[(GRAPHICS_BUF_SIZE)];
 
 
 void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
@@ -15,8 +14,11 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
 	
 	for(i = 0; i < noOfEntities; ++i)
 	{
-		unsigned int bufIndex = (GRAPHICS_X_SIZE) * graphics[i].yCoord + graphics[i].xCoord;
-		graphicsBuf[bufIndex] = graphics[i].appearance;
+		unsigned int bufIndex = (GRAPHICS_X_SIZE) * graphics[i].yPos + graphics[i].xPos;
+		if(bufIndex < (GRAPHICS_BUF_SIZE))
+		{
+			graphicsBuf[bufIndex] = graphics[i].appearance;
+		}
 	}
 	
 	for(i = 0; i < displayLength; i++)
@@ -32,5 +34,5 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
 		}
 	}
 	
-	printf("\033[2J%s", graphicsBuf);
+	printf("\033[2J%s\n", graphicsBuf);
 }

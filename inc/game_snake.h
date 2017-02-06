@@ -3,6 +3,6 @@
 
 void initSnake(void);
 
-void snakeUpdate(void);
+void snakeRun(void);
 
 #endif

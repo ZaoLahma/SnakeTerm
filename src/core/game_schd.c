@@ -1,17 +1,20 @@
 #include "../../inc/game_schd.h"
-#include "../../inc/term_graphics.h"
 #include "../../inc/game_input_handler.h"
+#include "../../inc/game_snake.h"
+#include <pthread.h>
 #include <unistd.h>
 
 static unsigned char running;
 
-static GraphicsEntity graphics[200];
+//static GraphicsEntity graphics[200];
 
 void gameMain()
 {
 	running = 1u;
 	
 	/* Populate a dummy graphics buf just to test the terminal graphics */
+	
+	/*
 	unsigned int i;
 	unsigned int y = 0;
 	char byteVal = 0x30u;
@@ -26,10 +29,20 @@ void gameMain()
 		}
 		byteVal++;
 	}
+	*/
+	
+	/* Start the input handler */
+	
+	initInputHandler();
+	
+	pthread_t inputThread;
+	(void)pthread_create(&inputThread, 0u, &inputHandlerMain, 0u);
+	
+	initSnake();
 	
 	while(1u == running)
 	{
-		termGraphicsDraw(graphics, 200);
+		snakeRun();
 		
 		char key = getKey();
 		if('s' == key)
@@ -39,4 +52,8 @@ void gameMain()
 		
 		usleep(1000000);
 	}
+	
+	stopInputHandler();
+	
+	pthread_join(inputThread, 0u);
 }
