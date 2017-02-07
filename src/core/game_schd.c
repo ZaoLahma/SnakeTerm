@@ -12,25 +12,6 @@ void gameMain()
 {
 	running = 1u;
 	
-	/* Populate a dummy graphics buf just to test the terminal graphics */
-	
-	/*
-	unsigned int i;
-	unsigned int y = 0;
-	char byteVal = 0x30u;
-	for(y = 0; y < 10; ++y)
-	{
-		for(i = 0; i < 20; ++i)
-		{
-			unsigned int index = y * 20 + i;
-			graphics[index].appearance = byteVal;
-			graphics[index].xCoord = i;
-			graphics[index].yCoord = y;
-		}
-		byteVal++;
-	}
-	*/
-	
 	/* Start the input handler */
 	
 	initInputHandler();

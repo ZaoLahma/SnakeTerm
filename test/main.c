@@ -8,5 +8,6 @@
 int main(void)
 {	
 	gameMain();	
+	printf("Snake exit\n");
 	return 0;
 }
