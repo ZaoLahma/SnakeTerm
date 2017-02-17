@@ -15,6 +15,7 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
 	for(i = 0; i < noOfEntities; ++i)
 	{
 		unsigned int bufIndex = (GRAPHICS_X_SIZE) * graphics[i].yPos + graphics[i].xPos;
+		//printf("Adding element to index: %u (x: %u, y: %u\n", bufIndex, graphics[i].xPos, graphics[i].yPos);
 		if(bufIndex < (GRAPHICS_BUF_SIZE))
 		{
 			graphicsBuf[bufIndex] = graphics[i].appearance;
