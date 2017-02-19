@@ -1,9 +1,12 @@
 #include "../../inc/game_input_handler.h"
 #include <stdio.h>
 #include <termios.h>
+#include <unistd.h>
+
+#define KEY_DOWN_VAL (27u)
 
 static unsigned char running;
-static char currKey;
+static unsigned char currKey;
 static struct termios old_term;
 static struct termios new_term;
 
@@ -16,9 +19,10 @@ void* inputHandlerMain(void* arg)
 	
 	while(1u == running)
 	{
-		char keyPressed = getchar();
-		
-		if((INPUT_HANDLER_KEY_INVALID) == currKey)
+		unsigned char keyPressed = getchar();
+
+		if((KEY_DOWN_VAL) != keyPressed &&
+		   (INPUT_HANDLER_KEY_INVALID) == currKey)
 		{
 			currKey = keyPressed;
 		}
@@ -29,11 +33,10 @@ void* inputHandlerMain(void* arg)
 
 static void initTermios() 
 {
-  tcgetattr(0, &old_term);
+  tcgetattr(STDIN_FILENO, &old_term);
   new_term = old_term;
-  new_term.c_lflag &= ~ICANON;
-  new_term.c_lflag &= ~ECHO;
-  tcsetattr(0, TCSANOW, &new_term);
+  new_term.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
 }
 
 static void resetTermios(void) 

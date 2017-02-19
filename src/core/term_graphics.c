@@ -5,42 +5,42 @@
 #define GRAPHICS_BUF_SIZE ((GRAPHICS_X_SIZE) * (GRAPHICS_Y_SIZE)) + (GRAPHICS_Y_SIZE)
 
 static char graphicsBuf[(GRAPHICS_BUF_SIZE)];
-static char printed = 0u;
+
+void termGraphicsInit(void)
+{
+	(void) memset(graphicsBuf, ' ', (GRAPHICS_BUF_SIZE));
+}
 
 void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
 {
-	unsigned int i;
-	unsigned int rowIndex = 0;
-	
-	for(i = 0; i < noOfEntities; ++i)
-	{
-		unsigned int bufIndex = (GRAPHICS_X_SIZE) * graphics[i].yPos + graphics[i].xPos;
-		//printf("Adding element to index: %u (x: %u, y: %u\n", bufIndex, graphics[i].xPos, graphics[i].yPos);
-		if(bufIndex < (GRAPHICS_BUF_SIZE))
-		{
-			graphicsBuf[bufIndex] = graphics[i].appearance;
-		}
-	}
-	
-	for(i = 0; i < (GRAPHICS_BUF_SIZE); i++)
-	{	
-		if(rowIndex == (GRAPHICS_X_SIZE))
-		{
-			rowIndex = 0;
-			memmove(&graphicsBuf[i + 1u], &graphicsBuf[i], (GRAPHICS_BUF_SIZE) - i);
-			graphicsBuf[i] = '\n';
-		}
-		else
-		{
-			rowIndex++;
-		}
-	}
-	
-	//printf("\033[2J%s\n", graphicsBuf);
-	
-	if(0u == printed)
-	{
-		printf("\n%s\n", graphicsBuf);
-		printed = 1u;
-	}
+    unsigned int graphicsPos = 0;
+
+    //Reset buffer
+    for(unsigned int i = 0; i < (GRAPHICS_BUF_SIZE); ++i)
+    {
+        graphicsBuf[i] = ' ';
+    }
+
+    unsigned int i = 0u;
+
+    //Start putting all objects into the buffer
+    for(i = 0u; i < noOfEntities; ++i)
+    {
+        graphicsPos = graphics[i].yPos * (GRAPHICS_X_SIZE) + 2u * graphics[i].yPos + graphics[i].xPos;
+        graphicsBuf[graphicsPos] = graphics[i].appearance;
+    }
+
+    //Add line breaks
+    graphicsPos = 0;
+    unsigned int y = 0u;
+    for(y = 0u; y <= (GRAPHICS_Y_SIZE); ++y)
+    {
+        graphicsBuf[((GRAPHICS_X_SIZE) + 1u + y * (GRAPHICS_X_SIZE) + 2u * y)] = '\n';
+    }
+    //std::cout<<"\033c"<<"\033[1;42m"<<"\033[1;33m"<<graphicsBuf<<"\033[0m";
+    //#ifndef __APPLE__
+    //std::cout<<"\033c"<<graphicsBuf;
+    //#else
+    printf("\033c%s", graphicsBuf);
+    //#endif
 }

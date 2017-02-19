@@ -12,8 +12,6 @@ void gameMain()
 {
 	running = 1u;
 	
-	/* Start the input handler */
-	
 	initInputHandler();
 	
 	pthread_t inputThread;

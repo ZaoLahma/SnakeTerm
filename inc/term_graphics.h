@@ -11,6 +11,8 @@ typedef struct GraphicsEntity_
 	unsigned int yPos;
 } GraphicsEntity;
 
+void termGraphicsInit(void);
+
 void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities);
 
 #endif
