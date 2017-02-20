@@ -15,13 +15,13 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
 {
     unsigned int graphicsPos = 0;
 
+    unsigned int i = 0u;
+
     //Reset buffer
-    for(unsigned int i = 0; i < (GRAPHICS_BUF_SIZE); ++i)
+    for(i = 0u; i < (GRAPHICS_BUF_SIZE); ++i)
     {
         graphicsBuf[i] = ' ';
     }
-
-    unsigned int i = 0u;
 
     //Start putting all objects into the buffer
     for(i = 0u; i < noOfEntities; ++i)
@@ -37,10 +37,5 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
     {
         graphicsBuf[((GRAPHICS_X_SIZE) + 1u + y * (GRAPHICS_X_SIZE) + 2u * y)] = '\n';
     }
-    //std::cout<<"\033c"<<"\033[1;42m"<<"\033[1;33m"<<graphicsBuf<<"\033[0m";
-    //#ifndef __APPLE__
-    //std::cout<<"\033c"<<graphicsBuf;
-    //#else
     printf("\033c%s", graphicsBuf);
-    //#endif
 }
