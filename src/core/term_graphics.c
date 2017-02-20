@@ -37,5 +37,6 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
     {
         graphicsBuf[((GRAPHICS_X_SIZE) + 1u + y * (GRAPHICS_X_SIZE) + 2u * y)] = '\n';
     }
-    printf("\033c%s", graphicsBuf);
+
+    printf("\033c%s\n", graphicsBuf);
 }

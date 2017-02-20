@@ -1,8 +1,8 @@
 #ifndef HEADER_TERM_GRAPHICS
 #define HEADER_TERM_GRAPHICS
 
-#define GRAPHICS_Y_SIZE (5u)
-#define GRAPHICS_X_SIZE (5u)
+#define GRAPHICS_Y_SIZE (10u)
+#define GRAPHICS_X_SIZE (20u)
 
 typedef struct GraphicsEntity_
 {

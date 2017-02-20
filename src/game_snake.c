@@ -21,10 +21,9 @@ void initSnake(void)
 	unsigned int i = 0u;
 	unsigned int xPos = 0u;
 	unsigned int yPos = 0u;
-	unsigned int graphicsBufIndex = 0u;
 	
 	printf("Num graphical entities: %d\n", (NUM_GRAPHICAL_ENTITIES));
-	
+
 	for( ; i < (NUM_GRAPHICAL_ENTITIES); ++i)
 	{
 		snakeGraphics[i].appearance = '*';
@@ -37,6 +36,55 @@ void initSnake(void)
 		{
 			xPos = 0u;
 			yPos++;
+		}
+	}
+
+	i = 0u;
+	xPos = 0u;
+	yPos = 0u;
+	unsigned int graphicsIndex = 0u;
+
+	for( ; i < (NUM_GRAPHICAL_ENTITIES); ++i)
+	{
+		if(yPos == 0)
+		{
+			snakeGraphics[graphicsIndex].appearance = '-';
+			snakeGraphics[graphicsIndex].xPos = xPos;
+			snakeGraphics[graphicsIndex].yPos = yPos;
+			graphicsIndex++;
+		}
+
+		if(xPos == 0u)
+		{
+			snakeGraphics[graphicsIndex].appearance = '|';
+			snakeGraphics[graphicsIndex].xPos = xPos;
+			snakeGraphics[graphicsIndex].yPos = yPos;
+			graphicsIndex++;
+		}
+
+		if(xPos == (HORIZONTAL_WALL_LENGTH - 1u))
+		{
+			snakeGraphics[graphicsIndex].appearance = '|';
+			snakeGraphics[graphicsIndex].xPos = xPos;
+			snakeGraphics[graphicsIndex].yPos = yPos;
+			graphicsIndex++;
+		}
+
+		if(yPos == (VERTICAL_WALL_LENGTH - 1u))
+		{
+			snakeGraphics[graphicsIndex].appearance = '-';
+			snakeGraphics[graphicsIndex].xPos = xPos;
+			snakeGraphics[graphicsIndex].yPos = yPos;
+			graphicsIndex++;
+		}
+
+		xPos++;
+
+		if(xPos == (HORIZONTAL_WALL_LENGTH))
+		{
+			yPos++;
+			printf("yPos: %u, wall length: %u\n", yPos, (VERTICAL_WALL_LENGTH));
+			xPos = 0;
 		}
 	}
 }
