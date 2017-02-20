@@ -24,21 +24,6 @@ void initSnake(void)
 	
 	printf("Num graphical entities: %d\n", (NUM_GRAPHICAL_ENTITIES));
 
-	for( ; i < (NUM_GRAPHICAL_ENTITIES); ++i)
-	{
-		snakeGraphics[i].appearance = '*';
-		snakeGraphics[i].xPos = xPos;
-		snakeGraphics[i].yPos = yPos;
-
-		xPos++;
-		
-		if(xPos == (HORIZONTAL_WALL_LENGTH))
-		{
-			xPos = 0u;
-			yPos++;
-		}
-	}
-
 	i = 0u;
 	xPos = 0u;
 	yPos = 0u;
@@ -46,32 +31,18 @@ void initSnake(void)
 
 	for( ; i < (NUM_GRAPHICAL_ENTITIES); ++i)
 	{
-		if(yPos == 0)
-		{
-			snakeGraphics[graphicsIndex].appearance = '-';
-			snakeGraphics[graphicsIndex].xPos = xPos;
-			snakeGraphics[graphicsIndex].yPos = yPos;
-			graphicsIndex++;
-		}
 
-		if(xPos == 0u)
+		if(xPos == 0u || xPos == (HORIZONTAL_WALL_LENGTH - 1u))
 		{
+			printf("Added horizontal wall at (%u, %u)\n", xPos, yPos);
 			snakeGraphics[graphicsIndex].appearance = '|';
 			snakeGraphics[graphicsIndex].xPos = xPos;
 			snakeGraphics[graphicsIndex].yPos = yPos;
 			graphicsIndex++;
 		}
-
-		if(xPos == (HORIZONTAL_WALL_LENGTH - 1u))
+		else if(yPos == 0 || yPos == (VERTICAL_WALL_LENGTH - 1u))
 		{
-			snakeGraphics[graphicsIndex].appearance = '|';
-			snakeGraphics[graphicsIndex].xPos = xPos;
-			snakeGraphics[graphicsIndex].yPos = yPos;
-			graphicsIndex++;
-		}
-
-		if(yPos == (VERTICAL_WALL_LENGTH - 1u))
-		{
+			printf("Added vertical wall at (%u, %u)\n", xPos, yPos);
 			snakeGraphics[graphicsIndex].appearance = '-';
 			snakeGraphics[graphicsIndex].xPos = xPos;
 			snakeGraphics[graphicsIndex].yPos = yPos;
