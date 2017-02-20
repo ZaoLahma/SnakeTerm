@@ -29,7 +29,7 @@ void gameMain()
 			running = 0u;
 		}
 		
-		usleep(1000000);
+		usleep(1000);
 	}
 	
 	stopInputHandler();

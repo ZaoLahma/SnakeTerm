@@ -59,9 +59,9 @@ void stopInputHandler(void)
 	resetTermios();	
 }
 
-char getKey()
+unsigned char getKey()
 {
-	char retVal = currKey;
+	unsigned char retVal = currKey;
 	
 	currKey = INPUT_HANDLER_KEY_INVALID;
 	

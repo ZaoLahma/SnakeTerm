@@ -9,6 +9,6 @@ void* inputHandlerMain(void*);
 
 void stopInputHandler(void);
 
-char getKey(void);
+unsigned char getKey(void);
 
 #endif
