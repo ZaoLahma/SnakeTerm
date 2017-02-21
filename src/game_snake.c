@@ -9,10 +9,10 @@
 #define NUM_GRAPHICAL_ENTITIES (((HORIZONTAL_WALL_LENGTH) * (VERTICAL_WALL_LENGTH)))
 #define NUM_WALL_ENTITIES (((HORIZONTAL_WALL_LENGTH) * 2u) + ((VERTICAL_WALL_LENGTH) * 2u))
 
-#define SNAKE_UP    (65u)
-#define SNAKE_DOWN  (66u)
-#define SNAKE_LEFT  (68u)
-#define SNAKE_RIGHT (67u)
+#define SNAKE_UP    (119u)
+#define SNAKE_DOWN  (115u)
+#define SNAKE_LEFT  (97u)
+#define SNAKE_RIGHT (100u)
 
 static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
 
@@ -76,7 +76,19 @@ void snakeRun(void)
 
 		if(key == (SNAKE_UP))
 		{
-
+			printf("SNAKE_UP\n");
+		}
+		if(key == (SNAKE_DOWN))
+		{
+			printf("SNAKE_DOWN\n");
+		}
+		if(key == (SNAKE_LEFT))
+		{
+			printf("SNAKE_LEFT\n");
+		}
+		if(key == (SNAKE_RIGHT))
+		{
+			printf("SNAKE_RIGHT\n");
 		}
 	}
 }
