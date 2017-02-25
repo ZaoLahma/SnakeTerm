@@ -14,11 +14,57 @@
 #define SNAKE_LEFT  (97u)
 #define SNAKE_RIGHT (100u)
 
+#define UP    (-1u)
+#define DOWN  (1u)
+#define LEFT  (-1u)
+#define RIGHT (1u)
+
+typedef struct Snake_
+{
+	unsigned int xPos;
+	unsigned int yPos;
+	unsigned int length;
+	unsigned int direction;
+} Snake;
+
 static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
+static Snake snake = { 10, 10, 3, DOWN};
+static unsigned int snakeGraphicsStart;
+
+static void moveSnake(void);
+
+static void moveSnake(void)
+{
+	if((UP) == snake.direction)
+	{
+		snakeGraphics[snakeGraphicsStart].yPos += -1u;
+	}
+
+	if((DOWN) == snake.direction)
+	{
+		snakeGraphics[snakeGraphicsStart].yPos += 1u;
+	}
+
+	if((LEFT) == snake.direction)
+	{
+		snakeGraphics[snakeGraphicsStart].xPos += -1u;
+	}
+
+	if((RIGHT) == snake.direction)
+	{
+		snakeGraphics[snakeGraphicsStart].xPos += 1u;
+	}
+
+	unsigned int i = 1u;
+	for( ; i < snake.length; ++i)
+	{
+		snakeGraphics[snakeGraphicsStart + i] = snakeGraphics[snakeGraphicsStart + i - 1u];
+		snakeGraphics[snakeGraphicsStart + i].appearance = '*';
+	}
+}
 
 void initSnake(void)
 {
-
 	termGraphicsInit();
 
 	/* Set up the initial play field */
@@ -63,6 +109,28 @@ void initSnake(void)
 			xPos = 0;
 		}
 	}
+
+	snakeGraphicsStart = graphicsIndex;
+
+	printf("snakeGraphicsStart: %u\n", snakeGraphicsStart);
+
+	snakeGraphics[snakeGraphicsStart].appearance = '@';
+	snakeGraphics[snakeGraphicsStart].xPos = snake.xPos;
+	snakeGraphics[snakeGraphicsStart].yPos = snake.yPos;
+
+	unsigned int snakeBodyIndex = 1u;
+
+	for( ; snakeBodyIndex < snake.length; ++snakeBodyIndex)
+	{
+		snakeGraphics[snakeGraphicsStart + snakeBodyIndex] = snakeGraphics[snakeGraphicsStart + snakeBodyIndex - 1u];
+		snakeGraphics[snakeGraphicsStart + snakeBodyIndex].appearance = '*';
+		snakeGraphics[snakeGraphicsStart + snakeBodyIndex].xPos = snakeGraphics[snakeGraphicsStart + snakeBodyIndex - 1u].xPos - 1u;
+
+		printf("body: %c (%u) - xPos: %u\n",
+				snakeGraphics[snakeGraphicsStart + snakeBodyIndex].appearance,
+				snakeGraphicsStart + snakeBodyIndex,
+				snakeGraphics[snakeGraphicsStart + snakeBodyIndex].xPos );
+	}
 }
 
 void snakeRun(void)
@@ -70,6 +138,8 @@ void snakeRun(void)
 	termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
 	unsigned char key = getKey();
 	
+	moveSnake();
+
 	if((INPUT_HANDLER_KEY_INVALID) != key)
 	{
 		(void) printf("key: %u\n", key);
