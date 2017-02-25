@@ -1,6 +1,7 @@
 #include "../inc/game_snake.h"
 #include "../inc/term_graphics.h"
 #include "../inc/game_input_handler.h"
+#include "../inc/game_schd.h"
 #include <stdio.h>
 
 #define HORIZONTAL_WALL_LENGTH ((GRAPHICS_X_SIZE))
@@ -13,6 +14,8 @@
 #define SNAKE_DOWN  (115u)
 #define SNAKE_LEFT  (97u)
 #define SNAKE_RIGHT (100u)
+
+#define QUIT ('q')
 
 typedef struct Snake_
 {
@@ -27,6 +30,7 @@ static Snake snake = { 10, 10, 4, SNAKE_DOWN};
 static unsigned int snakeGraphicsStart;
 
 static void renderSnake(void);
+static void checkBoundaries(void);
 
 static void renderSnake(void)
 {
@@ -63,6 +67,15 @@ static void renderSnake(void)
 	snakeGraphics[snakeGraphicsStart].yPos = snake.yPos;
 }
 
+static void checkBoundaries(void)
+{
+	if(snake.xPos == 0u || snake.xPos == ((HORIZONTAL_WALL_LENGTH) - 1u) ||
+	   snake.yPos == 0u || snake.yPos == ((VERTICAL_WALL_LENGTH) - 1u))
+	{
+		initSnake();
+	}
+}
+
 void initSnake(void)
 {
 	termGraphicsInit();
@@ -72,8 +85,6 @@ void initSnake(void)
 	unsigned int i = 0u;
 	unsigned int xPos = 0u;
 	unsigned int yPos = 0u;
-	
-	printf("Num graphical entities: %d\n", (NUM_GRAPHICAL_ENTITIES));
 
 	i = 0u;
 	xPos = 0u;
@@ -85,7 +96,6 @@ void initSnake(void)
 
 		if(xPos == 0u || xPos == (HORIZONTAL_WALL_LENGTH - 1u))
 		{
-			printf("Added horizontal wall at (%u, %u)\n", xPos, yPos);
 			snakeGraphics[graphicsIndex].appearance = '|';
 			snakeGraphics[graphicsIndex].xPos = xPos;
 			snakeGraphics[graphicsIndex].yPos = yPos;
@@ -93,7 +103,6 @@ void initSnake(void)
 		}
 		else if(yPos == 0 || yPos == (VERTICAL_WALL_LENGTH - 1u))
 		{
-			printf("Added vertical wall at (%u, %u)\n", xPos, yPos);
 			snakeGraphics[graphicsIndex].appearance = '-';
 			snakeGraphics[graphicsIndex].xPos = xPos;
 			snakeGraphics[graphicsIndex].yPos = yPos;
@@ -105,14 +114,15 @@ void initSnake(void)
 		if(xPos == (HORIZONTAL_WALL_LENGTH))
 		{
 			yPos++;
-			printf("yPos: %u, wall length: %u\n", yPos, (VERTICAL_WALL_LENGTH));
 			xPos = 0;
 		}
 	}
 
-	snakeGraphicsStart = graphicsIndex;
+	snake.xPos = 10u;
+	snake.yPos = 10u;
+	snake.direction = (SNAKE_DOWN);
 
-	printf("snakeGraphicsStart: %u\n", snakeGraphicsStart);
+	snakeGraphicsStart = graphicsIndex;
 
 	snakeGraphics[snakeGraphicsStart].appearance = '@';
 	snakeGraphics[snakeGraphicsStart].xPos = snake.xPos;
@@ -133,8 +143,6 @@ void snakeRun(void)
 	unsigned char key = getKey();
 	if((INPUT_HANDLER_KEY_INVALID) != key)
 	{
-		(void) printf("key: %u\n", key);
-
 		if(((SNAKE_DOWN) == snake.direction && key != (SNAKE_UP)) ||
 		   ((SNAKE_UP) == snake.direction && key != (SNAKE_DOWN)) ||
 		   ((SNAKE_RIGHT) == snake.direction && key != (SNAKE_LEFT)) ||
@@ -142,7 +150,13 @@ void snakeRun(void)
 		{
 			snake.direction = key;
 		}
+
+		if(key == (QUIT))
+		{
+			stop();
+		}
 	}
 	renderSnake();
 	termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
+	checkBoundaries();
 }

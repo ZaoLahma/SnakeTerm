@@ -35,15 +35,10 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
     //Put all graphics elements into the buffer
     for(i = 0u; i < noOfEntities; ++i)
     {
-    	printf("graphics[%u].appearance: %c\n", i, graphics[i].appearance);
         graphicsPos = graphics[i].yPos * (GRAPHICS_X_SIZE) + graphics[i].yPos + graphics[i].xPos;
         if(' ' == graphicsBuf[graphicsPos] && '\n' != graphicsBuf[graphicsPos])
         {
         	graphicsBuf[graphicsPos] = graphics[i].appearance;
-        }
-        else
-        {
-        	printf("skipping: %c\n", graphicsBuf[graphicsPos]);
         }
     }
 

@@ -1,4 +1,3 @@
-#include "../inc/game_input_handler.h"
 #include "../inc/game_schd.h"
 #include <stdio.h>
 #include <unistd.h>
@@ -8,6 +7,5 @@
 int main(void)
 {	
 	gameMain();	
-	printf("Snake exit\n");
 	return 0;
 }

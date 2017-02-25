@@ -1,12 +1,12 @@
 #include "../../inc/game_schd.h"
 #include "../../inc/game_input_handler.h"
 #include "../../inc/game_snake.h"
-#include <pthread.h>
 #include <unistd.h>
 
 static unsigned char running;
 
-//static GraphicsEntity graphics[200];
+#define SECOND_IN_USECONDS (1000000u)
+#define FRAMES_PER_SECOND  (5u)
 
 void gameMain()
 {
@@ -14,25 +14,18 @@ void gameMain()
 	
 	initInputHandler();
 	
-	pthread_t inputThread;
-	(void)pthread_create(&inputThread, 0u, &inputHandlerMain, 0u);
-	
 	initSnake();
 	
 	while(1u == running)
 	{
 		snakeRun();
-		
-		char key = getKey();
-		if('s' == key)
-		{
-			running = 0u;
-		}
-		
-		usleep(1000000);
+		usleep((SECOND_IN_USECONDS) / (FRAMES_PER_SECOND));
 	}
 	
 	stopInputHandler();
-	
-	pthread_join(inputThread, 0u);
+}
+
+void stop(void)
+{
+	running = 0u;
 }

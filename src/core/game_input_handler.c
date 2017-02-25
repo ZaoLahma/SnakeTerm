@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #define KEY_DOWN_VAL (27u)
 
@@ -12,6 +13,8 @@ static struct termios new_term;
 
 static void initTermios(void);
 static void resetTermios(void);
+
+static pthread_t inputThread;
 
 void* inputHandlerMain(void* arg)
 {
@@ -41,13 +44,15 @@ static void initTermios()
 
 static void resetTermios(void) 
 {
-  tcsetattr(0, TCSANOW, &old_term);
+  tcsetattr(STDIN_FILENO, TCSANOW, &old_term);
 }
 
 void initInputHandler(void)
 {	
 	initTermios();
 	
+	(void)pthread_create(&inputThread, 0u, &inputHandlerMain, 0u);
+
 	currKey = (INPUT_HANDLER_KEY_INVALID);
 	
 	running = 1u;
@@ -56,6 +61,7 @@ void initInputHandler(void)
 void stopInputHandler(void)
 {
 	running = 0u;
+	pthread_join(inputThread, 0u);
 	resetTermios();	
 }
 

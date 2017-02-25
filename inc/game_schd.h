@@ -3,4 +3,6 @@
 
 void gameMain(void);
 
+void stop(void);
+
 #endif
