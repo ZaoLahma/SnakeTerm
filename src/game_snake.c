@@ -14,11 +14,6 @@
 #define SNAKE_LEFT  (97u)
 #define SNAKE_RIGHT (100u)
 
-#define UP    (-1u)
-#define DOWN  (1u)
-#define LEFT  (-1u)
-#define RIGHT (1u)
-
 typedef struct Snake_
 {
 	unsigned int xPos;
@@ -28,39 +23,44 @@ typedef struct Snake_
 } Snake;
 
 static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
-static Snake snake = { 10, 10, 3, DOWN};
+static Snake snake = { 10, 10, 4, SNAKE_DOWN};
 static unsigned int snakeGraphicsStart;
 
-static void moveSnake(void);
+static void renderSnake(void);
 
-static void moveSnake(void)
+static void renderSnake(void)
 {
-	if((UP) == snake.direction)
+	unsigned int snakeBodyIndex = snake.length - 1u;
+
+	for( ; snakeBodyIndex >= 1u; snakeBodyIndex--)
 	{
-		snakeGraphics[snakeGraphicsStart].yPos += -1u;
+		snakeGraphics[snakeGraphicsStart + snakeBodyIndex] = snakeGraphics[snakeGraphicsStart + snakeBodyIndex - 1u];
+		snakeGraphics[snakeGraphicsStart + snakeBodyIndex].appearance = '*';
 	}
 
-	if((DOWN) == snake.direction)
+	if((SNAKE_UP) == snake.direction)
 	{
-		snakeGraphics[snakeGraphicsStart].yPos += 1u;
+		snake.yPos += -1u;
 	}
 
-	if((LEFT) == snake.direction)
+	if((SNAKE_DOWN) == snake.direction)
 	{
-		snakeGraphics[snakeGraphicsStart].xPos += -1u;
+		snake.yPos += 1u;
 	}
 
-	if((RIGHT) == snake.direction)
+	if((SNAKE_LEFT) == snake.direction)
 	{
-		snakeGraphics[snakeGraphicsStart].xPos += 1u;
+		snake.xPos += -1u;
 	}
 
-	unsigned int i = 1u;
-	for( ; i < snake.length; ++i)
+	if((SNAKE_RIGHT) == snake.direction)
 	{
-		snakeGraphics[snakeGraphicsStart + i] = snakeGraphics[snakeGraphicsStart + i - 1u];
-		snakeGraphics[snakeGraphicsStart + i].appearance = '*';
+		snake.xPos += 1u;
 	}
+
+	snakeGraphics[snakeGraphicsStart].appearance = '@';
+	snakeGraphics[snakeGraphicsStart].xPos = snake.xPos;
+	snakeGraphics[snakeGraphicsStart].yPos = snake.yPos;
 }
 
 void initSnake(void)
@@ -125,40 +125,24 @@ void initSnake(void)
 		snakeGraphics[snakeGraphicsStart + snakeBodyIndex] = snakeGraphics[snakeGraphicsStart + snakeBodyIndex - 1u];
 		snakeGraphics[snakeGraphicsStart + snakeBodyIndex].appearance = '*';
 		snakeGraphics[snakeGraphicsStart + snakeBodyIndex].xPos = snakeGraphics[snakeGraphicsStart + snakeBodyIndex - 1u].xPos - 1u;
-
-		printf("body: %c (%u) - xPos: %u\n",
-				snakeGraphics[snakeGraphicsStart + snakeBodyIndex].appearance,
-				snakeGraphicsStart + snakeBodyIndex,
-				snakeGraphics[snakeGraphicsStart + snakeBodyIndex].xPos );
 	}
 }
 
 void snakeRun(void)
 {
-	termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
 	unsigned char key = getKey();
-	
-	moveSnake();
-
 	if((INPUT_HANDLER_KEY_INVALID) != key)
 	{
 		(void) printf("key: %u\n", key);
 
-		if(key == (SNAKE_UP))
+		if(((SNAKE_DOWN) == snake.direction && key != (SNAKE_UP)) ||
+		   ((SNAKE_UP) == snake.direction && key != (SNAKE_DOWN)) ||
+		   ((SNAKE_RIGHT) == snake.direction && key != (SNAKE_LEFT)) ||
+		   ((SNAKE_LEFT) == snake.direction && key != (SNAKE_RIGHT)))
 		{
-			printf("SNAKE_UP\n");
-		}
-		if(key == (SNAKE_DOWN))
-		{
-			printf("SNAKE_DOWN\n");
-		}
-		if(key == (SNAKE_LEFT))
-		{
-			printf("SNAKE_LEFT\n");
-		}
-		if(key == (SNAKE_RIGHT))
-		{
-			printf("SNAKE_RIGHT\n");
+			snake.direction = key;
 		}
 	}
+	renderSnake();
+	termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
 }

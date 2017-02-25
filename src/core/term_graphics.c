@@ -5,18 +5,14 @@
 #define GRAPHICS_BUF_SIZE ((GRAPHICS_X_SIZE) * (GRAPHICS_Y_SIZE)) + (GRAPHICS_Y_SIZE)
 
 static char graphicsBuf[(GRAPHICS_BUF_SIZE)];
-static unsigned int printed;
 
 void termGraphicsInit(void)
 {
 	(void) memset(graphicsBuf, ' ', (GRAPHICS_BUF_SIZE));
-	printed = 0u;
 }
 
 void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
 {
-	printed = 1u;
-
     unsigned int graphicsPos = 0;
 
     unsigned int i = 0u;
