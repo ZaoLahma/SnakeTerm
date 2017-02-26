@@ -50,7 +50,6 @@ static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
 static Snake snake;
 static unsigned int snakeRunCnt;
 static SnakeFoodItem snakeFood = { 'Q', 0u, 0u };
-static unsigned int snakeTextGraphicsBufStartPos;
 
 static void renderSnake(void);
 static void checkWallCollision(void);
@@ -258,8 +257,6 @@ void initSnake(void)
 	snakeFood.noOfFoodItems = 0u;
 
 	srand(time(0));
-
-	snakeTextGraphicsBufStartPos = snakeFood.graphicsBufStartPos + (SNAKE_MAX_FOOD_ITEMS) + 1u;
 }
 
 void snakeRun(void)

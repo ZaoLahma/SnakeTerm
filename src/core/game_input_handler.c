@@ -18,8 +18,6 @@ static pthread_t inputThread;
 
 void* inputHandlerMain(void* arg)
 {
-	printf("inputHandlerMain running\n");
-	
 	while(1u == running)
 	{
 		unsigned char keyPressed = getchar();
