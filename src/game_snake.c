@@ -255,6 +255,7 @@ void initSnake(void)
 	renderSnake();
 
 	snakeFood.graphicsBufStartPos = snake.graphicsBufStartPos + (SNAKE_MAX_LENGTH) + 1u;
+	snakeFood.noOfFoodItems = 0u;
 
 	srand(time(0));
 
