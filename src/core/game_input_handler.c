@@ -28,6 +28,11 @@ void* inputHandlerMain(void* arg)
 		   (INPUT_HANDLER_KEY_INVALID) == currKey)
 		{
 			currKey = keyPressed;
+
+			if((QUIT) == currKey)
+			{
+				running = 0u;
+			}
 		}
 	}
 	

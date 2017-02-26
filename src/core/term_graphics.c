@@ -18,7 +18,7 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
     unsigned int i = 0u;
     unsigned int x = 0u;
 
-    //Reset buffer and add all line breaks
+    /* Reset buffer and add all line breaks */
     memset(graphicsBuf, ' ', (GRAPHICS_BUF_SIZE));
 
     for(i = 0u; i < (GRAPHICS_BUF_SIZE); ++i)
@@ -32,7 +32,7 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
         }
     }
 
-    //Put all graphics elements into the buffer
+    /* Put all graphics elements into the buffer */
     for(i = 0u; i < noOfEntities; ++i)
     {
         graphicsPos = graphics[i].yPos * (GRAPHICS_X_SIZE) + graphics[i].yPos + graphics[i].xPos;
@@ -42,7 +42,7 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
         }
     }
 
-    //Finally clear the screen and print the graphics
+    /* Finally clear the screen and print the graphics */
     printf("\n\033c");
     graphicsPos = 0u;
     for(graphicsPos = 0u; graphicsPos < GRAPHICS_BUF_SIZE; ++graphicsPos)

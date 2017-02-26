@@ -2,6 +2,7 @@
 #define HEADER_GAME_INPUT_HANDLER
 
 #define INPUT_HANDLER_KEY_INVALID (0xFFu)
+#define QUIT ('q')
 
 void initInputHandler(void);
 

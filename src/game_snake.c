@@ -5,11 +5,13 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define HORIZONTAL_WALL_LENGTH ((GRAPHICS_X_SIZE))
 #define VERTICAL_WALL_LENGTH ((GRAPHICS_Y_SIZE))
 #define SNAKE_MAX_LENGTH ((HORIZONTAL_WALL_LENGTH) * (VERTICAL_WALL_LENGTH))
 #define SNAKE_MAX_FOOD_ITEMS (20u)
+
 #define NUM_GRAPHICAL_ENTITIES ((HORIZONTAL_WALL_LENGTH * 2u) + \
 								(VERTICAL_WALL_LENGTH * 2u) + \
 								(SNAKE_MAX_LENGTH) + \
@@ -27,8 +29,6 @@
 #define SNAKE_LEFT  (97u)
 #define SNAKE_RIGHT (100u)
 
-#define QUIT ('q')
-
 typedef struct Snake_
 {
 	unsigned int xPos;
@@ -45,14 +45,16 @@ typedef struct SnakeFoodItem_
 } SnakeFoodItem;
 
 static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
-static Snake snake = { 10, 10, 3u, SNAKE_DOWN, 0u};
+static Snake snake;
 static unsigned int snakeRunCnt;
 static SnakeFoodItem snakeFood = { 'Q', 0 };
+static unsigned int snakeTextGraphicsBufStartPos;
 
 static void renderSnake(void);
-static void checkBoundaries(void);
+static void checkWallCollision(void);
 static void generateFoodItem(void);
 static void checkFoodCollision(void);
+static void checkSnakeCollision(void);
 
 static void renderSnake(void)
 {
@@ -89,7 +91,7 @@ static void renderSnake(void)
 	snakeGraphics[snake.graphicsBufStartPos].yPos = snake.yPos;
 }
 
-static void checkBoundaries(void)
+static void checkWallCollision(void)
 {
 	if(snake.xPos == 0u || snake.xPos == ((HORIZONTAL_WALL_LENGTH) - 1u) ||
 	   snake.yPos == 0u || snake.yPos == ((VERTICAL_WALL_LENGTH) - 1u))
@@ -142,6 +144,27 @@ static void checkFoodCollision(void)
 	}
 }
 
+static void checkSnakeCollision(void)
+{
+	unsigned int graphicsBufIndex = snake.graphicsBufStartPos + 1u;
+	unsigned int i = 0u;
+
+	for( ; i < (SNAKE_MAX_LENGTH); ++i)
+	{
+		if(' ' != snakeGraphics[graphicsBufIndex].appearance)
+		{
+			if(snake.xPos == snakeGraphics[graphicsBufIndex].xPos &&
+			   snake.yPos == snakeGraphics[graphicsBufIndex].yPos)
+			{
+				i = (SNAKE_MAX_LENGTH);
+				initSnake();
+			}
+		}
+
+		graphicsBufIndex++;
+	}
+}
+
 void initSnake(void)
 {
 	termGraphicsInit();
@@ -184,6 +207,7 @@ void initSnake(void)
 		}
 	}
 
+	snake.length = 3u;
 	snake.xPos = 10u;
 	snake.yPos = 10u;
 	snake.direction = (SNAKE_DOWN);
@@ -194,9 +218,13 @@ void initSnake(void)
 	snakeGraphics[snake.graphicsBufStartPos].xPos = snake.xPos;
 	snakeGraphics[snake.graphicsBufStartPos].yPos = snake.yPos;
 
+	renderSnake();
+
 	snakeFood.graphicsBufStartPos = snake.graphicsBufStartPos + (SNAKE_MAX_LENGTH) + 1u;
 
 	srand(time(0));
+
+	snakeTextGraphicsBufStartPos = snakeFood.graphicsBufStartPos + (SNAKE_MAX_FOOD_ITEMS) + 1u;
 }
 
 void snakeRun(void)
@@ -227,8 +255,9 @@ void snakeRun(void)
 	{
 		renderSnake();
 		termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
-		checkBoundaries();
+		checkWallCollision();
 		checkFoodCollision();
+		checkSnakeCollision();
 	}
 
 	if(snakeRunCnt % (SNAKE_FOOD_CYCLE) == 0u)
