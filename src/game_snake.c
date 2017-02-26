@@ -7,8 +7,14 @@
 #define HORIZONTAL_WALL_LENGTH ((GRAPHICS_X_SIZE))
 #define VERTICAL_WALL_LENGTH ((GRAPHICS_Y_SIZE))
 #define SNAKE_MAX_LENGTH ((HORIZONTAL_WALL_LENGTH) * (VERTICAL_WALL_LENGTH))
-#define NUM_GRAPHICAL_ENTITIES (((HORIZONTAL_WALL_LENGTH) * (VERTICAL_WALL_LENGTH)))
-#define NUM_WALL_ENTITIES (((HORIZONTAL_WALL_LENGTH) * 2u) + ((VERTICAL_WALL_LENGTH) * 2u))
+#define SNAKE_MAX_FOOD_ITEMS (20u)
+#define NUM_GRAPHICAL_ENTITIES ((HORIZONTAL_WALL_LENGTH * 2u) + \
+								(VERTICAL_WALL_LENGTH * 2u) + \
+								(SNAKE_MAX_LENGTH) + \
+								(SNAKE_MAX_FOOD_ITEMS))
+
+#define SNAKE_SPEED_Y_FACTOR ((GRAPHICS_Y_SIZE) / 10u)
+#define SNAKE_SPEED_X_FACTOR ((GRAPHICS_X_SIZE) / 10u)
 
 #define SNAKE_UP    (119u)
 #define SNAKE_DOWN  (115u)
@@ -23,11 +29,12 @@ typedef struct Snake_
 	unsigned int yPos;
 	unsigned int length;
 	unsigned int direction;
+	unsigned int graphicsBufStartPos;
 } Snake;
 
 static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
-static Snake snake = { 10, 10, 4, SNAKE_DOWN};
-static unsigned int snakeGraphicsStart;
+static Snake snake = { 10, 10, 10, SNAKE_DOWN, 0u};
+static unsigned char snakeRunCnt;
 
 static void renderSnake(void);
 static void checkBoundaries(void);
@@ -38,8 +45,8 @@ static void renderSnake(void)
 
 	for( ; snakeBodyIndex >= 1u; snakeBodyIndex--)
 	{
-		snakeGraphics[snakeGraphicsStart + snakeBodyIndex] = snakeGraphics[snakeGraphicsStart + snakeBodyIndex - 1u];
-		snakeGraphics[snakeGraphicsStart + snakeBodyIndex].appearance = '*';
+		snakeGraphics[snake.graphicsBufStartPos + snakeBodyIndex] = snakeGraphics[snake.graphicsBufStartPos + snakeBodyIndex - 1u];
+		snakeGraphics[snake.graphicsBufStartPos + snakeBodyIndex].appearance = '*';
 	}
 
 	if((SNAKE_UP) == snake.direction)
@@ -62,9 +69,9 @@ static void renderSnake(void)
 		snake.xPos += 1u;
 	}
 
-	snakeGraphics[snakeGraphicsStart].appearance = '@';
-	snakeGraphics[snakeGraphicsStart].xPos = snake.xPos;
-	snakeGraphics[snakeGraphicsStart].yPos = snake.yPos;
+	snakeGraphics[snake.graphicsBufStartPos].appearance = '@';
+	snakeGraphics[snake.graphicsBufStartPos].xPos = snake.xPos;
+	snakeGraphics[snake.graphicsBufStartPos].yPos = snake.yPos;
 }
 
 static void checkBoundaries(void)
@@ -122,20 +129,11 @@ void initSnake(void)
 	snake.yPos = 10u;
 	snake.direction = (SNAKE_DOWN);
 
-	snakeGraphicsStart = graphicsIndex;
+	snake.graphicsBufStartPos = graphicsIndex;
 
-	snakeGraphics[snakeGraphicsStart].appearance = '@';
-	snakeGraphics[snakeGraphicsStart].xPos = snake.xPos;
-	snakeGraphics[snakeGraphicsStart].yPos = snake.yPos;
-
-	unsigned int snakeBodyIndex = 1u;
-
-	for( ; snakeBodyIndex < snake.length; ++snakeBodyIndex)
-	{
-		snakeGraphics[snakeGraphicsStart + snakeBodyIndex] = snakeGraphics[snakeGraphicsStart + snakeBodyIndex - 1u];
-		snakeGraphics[snakeGraphicsStart + snakeBodyIndex].appearance = '*';
-		snakeGraphics[snakeGraphicsStart + snakeBodyIndex].xPos = snakeGraphics[snakeGraphicsStart + snakeBodyIndex - 1u].xPos - 1u;
-	}
+	snakeGraphics[snake.graphicsBufStartPos].appearance = '@';
+	snakeGraphics[snake.graphicsBufStartPos].xPos = snake.xPos;
+	snakeGraphics[snake.graphicsBufStartPos].yPos = snake.yPos;
 }
 
 void snakeRun(void)
@@ -149,6 +147,12 @@ void snakeRun(void)
 		   ((SNAKE_LEFT) == snake.direction && key != (SNAKE_RIGHT)))
 		{
 			snake.direction = key;
+
+			if((snake.direction == (SNAKE_UP) ||
+				snake.direction == (SNAKE_DOWN)))
+			{
+				snakeRunCnt = 0;
+			}
 		}
 
 		if(key == (QUIT))
@@ -156,7 +160,18 @@ void snakeRun(void)
 			stop();
 		}
 	}
-	renderSnake();
-	termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
-	checkBoundaries();
+
+	if(((snake.direction == (SNAKE_UP) ||
+		snake.direction == (SNAKE_DOWN)) &&
+		snakeRunCnt % (SNAKE_SPEED_X_FACTOR) == 0) ||
+		((snake.direction == (SNAKE_LEFT) ||
+		snake.direction == (SNAKE_RIGHT)) &&
+		snakeRunCnt % (SNAKE_SPEED_Y_FACTOR) == 0))
+	{
+		renderSnake();
+		termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
+		checkBoundaries();
+	}
+
+	snakeRunCnt++;
 }

@@ -18,9 +18,9 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
     unsigned int i = 0u;
     unsigned int x = 0u;
 
+    //Reset buffer and add all line breaks
     memset(graphicsBuf, ' ', (GRAPHICS_BUF_SIZE));
 
-    //Reset buffer and add all line breaks
     for(i = 0u; i < (GRAPHICS_BUF_SIZE); ++i)
     {
         x++;
