@@ -3,6 +3,6 @@
 
 void gameMain(void);
 
-void stop(void);
+void gameStop(void);
 
 #endif

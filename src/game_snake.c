@@ -3,6 +3,8 @@
 #include "../inc/game_input_handler.h"
 #include "../inc/game_schd.h"
 #include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
 
 #define HORIZONTAL_WALL_LENGTH ((GRAPHICS_X_SIZE))
 #define VERTICAL_WALL_LENGTH ((GRAPHICS_Y_SIZE))
@@ -15,6 +17,10 @@
 
 #define SNAKE_SPEED_Y_FACTOR ((GRAPHICS_Y_SIZE) / 10u)
 #define SNAKE_SPEED_X_FACTOR ((GRAPHICS_X_SIZE) / 10u)
+
+#define SNAKE_TICK_CYCLE (1000u)
+
+#define SNAKE_FOOD_CYCLE (200u)
 
 #define SNAKE_UP    (119u)
 #define SNAKE_DOWN  (115u)
@@ -32,12 +38,21 @@ typedef struct Snake_
 	unsigned int graphicsBufStartPos;
 } Snake;
 
+typedef struct SnakeFoodItem_
+{
+	char appearance;
+	unsigned int graphicsBufStartPos;
+} SnakeFoodItem;
+
 static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
-static Snake snake = { 10, 10, 10, SNAKE_DOWN, 0u};
-static unsigned char snakeRunCnt;
+static Snake snake = { 10, 10, 3u, SNAKE_DOWN, 0u};
+static unsigned int snakeRunCnt;
+static SnakeFoodItem snakeFood = { 'Q', 0 };
 
 static void renderSnake(void);
 static void checkBoundaries(void);
+static void generateFoodItem(void);
+static void checkFoodCollision(void);
 
 static void renderSnake(void)
 {
@@ -83,6 +98,50 @@ static void checkBoundaries(void)
 	}
 }
 
+static void generateFoodItem(void)
+{
+	unsigned int xPos = rand() % ((HORIZONTAL_WALL_LENGTH) - 2u) + 1u;
+	unsigned int yPos = rand() % ((VERTICAL_WALL_LENGTH) - 2u) + 1u;
+
+	unsigned int graphicsBufIndex = snakeFood.graphicsBufStartPos;
+	unsigned int i = 0u;
+
+	for( ; i < (SNAKE_MAX_FOOD_ITEMS); ++i)
+	{
+		if(' ' == snakeGraphics[graphicsBufIndex].appearance)
+		{
+			snakeGraphics[graphicsBufIndex].appearance = snakeFood.appearance;
+			snakeGraphics[graphicsBufIndex].xPos = xPos;
+			snakeGraphics[graphicsBufIndex].yPos = yPos;
+			i = (SNAKE_MAX_FOOD_ITEMS);
+		}
+
+		graphicsBufIndex++;
+	}
+}
+
+static void checkFoodCollision(void)
+{
+	unsigned int graphicsBufIndex = snakeFood.graphicsBufStartPos;
+	unsigned int i = 0u;
+
+	for( ; i < (SNAKE_MAX_FOOD_ITEMS); ++i)
+	{
+		if(' ' != snakeGraphics[graphicsBufIndex].appearance)
+		{
+			if(snake.xPos == snakeGraphics[graphicsBufIndex].xPos &&
+			   snake.yPos == snakeGraphics[graphicsBufIndex].yPos)
+			{
+				i = (SNAKE_MAX_FOOD_ITEMS);
+				snake.length += 1u;
+				snakeGraphics[graphicsBufIndex].appearance = ' ';
+			}
+		}
+
+		graphicsBufIndex++;
+	}
+}
+
 void initSnake(void)
 {
 	termGraphicsInit();
@@ -100,7 +159,7 @@ void initSnake(void)
 
 	for( ; i < (NUM_GRAPHICAL_ENTITIES); ++i)
 	{
-
+		snakeGraphics[i].appearance = ' ';
 		if(xPos == 0u || xPos == (HORIZONTAL_WALL_LENGTH - 1u))
 		{
 			snakeGraphics[graphicsIndex].appearance = '|';
@@ -134,6 +193,10 @@ void initSnake(void)
 	snakeGraphics[snake.graphicsBufStartPos].appearance = '@';
 	snakeGraphics[snake.graphicsBufStartPos].xPos = snake.xPos;
 	snakeGraphics[snake.graphicsBufStartPos].yPos = snake.yPos;
+
+	snakeFood.graphicsBufStartPos = snake.graphicsBufStartPos + (SNAKE_MAX_LENGTH) + 1u;
+
+	srand(time(0));
 }
 
 void snakeRun(void)
@@ -147,17 +210,11 @@ void snakeRun(void)
 		   ((SNAKE_LEFT) == snake.direction && key != (SNAKE_RIGHT)))
 		{
 			snake.direction = key;
-
-			if((snake.direction == (SNAKE_UP) ||
-				snake.direction == (SNAKE_DOWN)))
-			{
-				snakeRunCnt = 0;
-			}
 		}
 
 		if(key == (QUIT))
 		{
-			stop();
+			gameStop();
 		}
 	}
 
@@ -171,7 +228,13 @@ void snakeRun(void)
 		renderSnake();
 		termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
 		checkBoundaries();
+		checkFoodCollision();
 	}
 
-	snakeRunCnt++;
+	if(snakeRunCnt % (SNAKE_FOOD_CYCLE) == 0u)
+	{
+		generateFoodItem();
+	}
+
+	snakeRunCnt = (snakeRunCnt + 1u) % (SNAKE_TICK_CYCLE);
 }

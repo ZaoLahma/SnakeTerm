@@ -33,7 +33,7 @@ void gameMain()
 	stopInputHandler();
 }
 
-void stop(void)
+void gameStop(void)
 {
 	running = 0u;
 }
