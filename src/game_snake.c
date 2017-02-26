@@ -20,9 +20,10 @@
 #define SNAKE_SPEED_Y_FACTOR ((GRAPHICS_Y_SIZE) / 10u)
 #define SNAKE_SPEED_X_FACTOR ((GRAPHICS_X_SIZE) / 10u)
 
-#define SNAKE_TICK_CYCLE (1000u)
+#define SNAKE_TICK_CYCLE (10000u)
 
-#define SNAKE_FOOD_CYCLE (200u)
+#define SNAKE_FOOD_ADD_CYCLE    (50u)
+#define SNAKE_FOOD_REMOVE_CYCLE (100u)
 
 #define SNAKE_UP    (119u)
 #define SNAKE_DOWN  (115u)
@@ -41,13 +42,14 @@ typedef struct Snake_
 typedef struct SnakeFoodItem_
 {
 	char appearance;
+	unsigned int noOfFoodItems;
 	unsigned int graphicsBufStartPos;
 } SnakeFoodItem;
 
 static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
 static Snake snake;
 static unsigned int snakeRunCnt;
-static SnakeFoodItem snakeFood = { 'Q', 0 };
+static SnakeFoodItem snakeFood = { 'Q', 0u, 0u };
 static unsigned int snakeTextGraphicsBufStartPos;
 
 static void renderSnake(void);
@@ -55,6 +57,7 @@ static void checkWallCollision(void);
 static void generateFoodItem(void);
 static void checkFoodCollision(void);
 static void checkSnakeCollision(void);
+static void removeFoodItem(void);
 
 static void renderSnake(void)
 {
@@ -112,6 +115,7 @@ static void generateFoodItem(void)
 	{
 		if(' ' == snakeGraphics[graphicsBufIndex].appearance)
 		{
+			snakeFood.noOfFoodItems += 1u;
 			snakeGraphics[graphicsBufIndex].appearance = snakeFood.appearance;
 			snakeGraphics[graphicsBufIndex].xPos = xPos;
 			snakeGraphics[graphicsBufIndex].yPos = yPos;
@@ -136,6 +140,7 @@ static void checkFoodCollision(void)
 			{
 				i = (SNAKE_MAX_FOOD_ITEMS);
 				snake.length += 1u;
+				snakeFood.noOfFoodItems -= 1u;
 				snakeGraphics[graphicsBufIndex].appearance = ' ';
 			}
 		}
@@ -162,6 +167,35 @@ static void checkSnakeCollision(void)
 		}
 
 		graphicsBufIndex++;
+	}
+}
+
+static void removeFoodItem(void)
+{
+	if(0u != snakeFood.noOfFoodItems)
+	{
+		unsigned int itemToRemove = rand() % snakeFood.noOfFoodItems;
+
+		unsigned int graphicsBufIndex = snakeFood.graphicsBufStartPos;
+		unsigned int i = 0u;
+		unsigned int foodItemIndex = 0u;
+
+		for( ; i < (SNAKE_MAX_FOOD_ITEMS); ++i)
+		{
+			if(' ' != snakeGraphics[graphicsBufIndex].appearance)
+			{
+				if(foodItemIndex == itemToRemove)
+				{
+					i = (SNAKE_MAX_FOOD_ITEMS);
+					snakeFood.noOfFoodItems -= 1u;
+					snakeGraphics[graphicsBufIndex].appearance = ' ';
+				}
+
+				foodItemIndex++;
+			}
+
+			graphicsBufIndex++;
+		}
 	}
 }
 
@@ -260,9 +294,14 @@ void snakeRun(void)
 		checkSnakeCollision();
 	}
 
-	if(snakeRunCnt % (SNAKE_FOOD_CYCLE) == 0u)
+	if(snakeRunCnt % (SNAKE_FOOD_ADD_CYCLE) == 0u)
 	{
 		generateFoodItem();
+	}
+
+	if(snakeRunCnt % (SNAKE_FOOD_REMOVE_CYCLE) == 0u)
+	{
+		removeFoodItem();
 	}
 
 	snakeRunCnt = (snakeRunCnt + 1u) % (SNAKE_TICK_CYCLE);
