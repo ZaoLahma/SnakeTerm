@@ -5,6 +5,7 @@
 #include <pthread.h>
 
 #define KEY_DOWN_VAL (27u)
+#define KEY_UP_VAL   (91u)
 
 static unsigned char running;
 static unsigned char currKey;
@@ -23,6 +24,7 @@ void* inputHandlerMain(void* arg)
 		unsigned char keyPressed = getchar();
 
 		if((KEY_DOWN_VAL) != keyPressed &&
+		   (KEY_UP_VAL)   != keyPressed &&
 		   (INPUT_HANDLER_KEY_INVALID) == currKey)
 		{
 			currKey = keyPressed;

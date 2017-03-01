@@ -25,10 +25,10 @@
 #define SNAKE_FOOD_ADD_CYCLE    (50u)
 #define SNAKE_FOOD_REMOVE_CYCLE (100u)
 
-#define SNAKE_UP    (119u)
-#define SNAKE_DOWN  (115u)
-#define SNAKE_LEFT  (97u)
-#define SNAKE_RIGHT (100u)
+#define SNAKE_UP    (65u)
+#define SNAKE_DOWN  (66u)
+#define SNAKE_LEFT  (68u)
+#define SNAKE_RIGHT (67u)
 
 typedef struct Snake_
 {
