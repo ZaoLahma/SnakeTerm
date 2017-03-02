@@ -49,5 +49,4 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
     {
     	printf("%c", graphicsBuf[graphicsPos]);
     }
-    /* printf("\n"); */
 }
