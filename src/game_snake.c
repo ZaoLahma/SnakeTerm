@@ -29,11 +29,14 @@
 #define SNAKE_DOWN  (66u)
 #define SNAKE_LEFT  (68u)
 #define SNAKE_RIGHT (67u)
+#define SNAKE_PAUSE (32u)
+
+#define SNAKE_SCORE_PER_FOOD_ITEM (125u)
 
 typedef struct Snake_
 {
-	unsigned int xPos;
-	unsigned int yPos;
+	int xPos;
+	int yPos;
 	unsigned int length;
 	unsigned int direction;
 	unsigned int graphicsBufStartPos;
@@ -50,13 +53,56 @@ static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
 static Snake snake;
 static unsigned int snakeRunCnt;
 static SnakeFoodItem snakeFood = { 'Q', 0u, 0u };
+static unsigned int score;
+static unsigned char paused;
+static unsigned char currKey;
 
+static void handleSnakeKey();
 static void renderSnake(void);
 static void checkWallCollision(void);
 static void generateFoodItem(void);
 static void checkFoodCollision(void);
 static void checkSnakeCollision(void);
 static void removeFoodItem(void);
+static void printSnakeScore(void);
+static void printSnakeInstructions(void);
+static void printSnakeStatus(void);
+
+static void handleSnakeKey()
+{
+	unsigned char key = getKey();
+
+	if((INPUT_HANDLER_KEY_INVALID) != key)
+	{
+
+		if((key == (SNAKE_UP) ||
+		   key == (SNAKE_DOWN) ||
+		   key == (SNAKE_LEFT) ||
+		   key == (SNAKE_RIGHT)) &&
+		   0u == paused)
+		{
+			if(((SNAKE_DOWN) == snake.direction && key != (SNAKE_UP)) ||
+			   ((SNAKE_UP) == snake.direction && key != (SNAKE_DOWN)) ||
+			   ((SNAKE_RIGHT) == snake.direction && key != (SNAKE_LEFT)) ||
+			   ((SNAKE_LEFT) == snake.direction && key != (SNAKE_RIGHT)))
+			{
+				snake.direction = key;
+			}
+		}
+
+		currKey = key;
+	}
+
+	if(key == (QUIT))
+	{
+		gameStop();
+	}
+
+	if(key == (SNAKE_PAUSE))
+	{
+		paused = !paused;
+	}
+}
 
 static void renderSnake(void)
 {
@@ -70,22 +116,22 @@ static void renderSnake(void)
 
 	if((SNAKE_UP) == snake.direction)
 	{
-		snake.yPos += -1u;
+		snake.yPos += -1;
 	}
 
 	if((SNAKE_DOWN) == snake.direction)
 	{
-		snake.yPos += 1u;
+		snake.yPos += 1;
 	}
 
 	if((SNAKE_LEFT) == snake.direction)
 	{
-		snake.xPos += -1u;
+		snake.xPos += -1;
 	}
 
 	if((SNAKE_RIGHT) == snake.direction)
 	{
-		snake.xPos += 1u;
+		snake.xPos += 1;
 	}
 
 	snakeGraphics[snake.graphicsBufStartPos].appearance = '@';
@@ -95,8 +141,8 @@ static void renderSnake(void)
 
 static void checkWallCollision(void)
 {
-	if(snake.xPos == 0u || snake.xPos == ((HORIZONTAL_WALL_LENGTH) - 1u) ||
-	   snake.yPos == 0u || snake.yPos == ((VERTICAL_WALL_LENGTH) - 1u))
+	if(snake.xPos <= 0 || snake.xPos >= (int) ((HORIZONTAL_WALL_LENGTH) - 1) ||
+	   snake.yPos <= 0 || snake.yPos >= (int) ((VERTICAL_WALL_LENGTH) - 1))
 	{
 		initSnake();
 	}
@@ -134,13 +180,14 @@ static void checkFoodCollision(void)
 	{
 		if(' ' != snakeGraphics[graphicsBufIndex].appearance)
 		{
-			if(snake.xPos == snakeGraphics[graphicsBufIndex].xPos &&
-			   snake.yPos == snakeGraphics[graphicsBufIndex].yPos)
+			if(snake.xPos == (int) snakeGraphics[graphicsBufIndex].xPos &&
+			   snake.yPos == (int) snakeGraphics[graphicsBufIndex].yPos)
 			{
 				i = (SNAKE_MAX_FOOD_ITEMS);
 				snake.length += 1u;
 				snakeFood.noOfFoodItems -= 1u;
 				snakeGraphics[graphicsBufIndex].appearance = ' ';
+				score += (SNAKE_SCORE_PER_FOOD_ITEM);
 			}
 		}
 
@@ -155,10 +202,10 @@ static void checkSnakeCollision(void)
 
 	for( ; i < (SNAKE_MAX_LENGTH); ++i)
 	{
-		if(' ' != snakeGraphics[graphicsBufIndex].appearance)
+		if('*' == snakeGraphics[graphicsBufIndex].appearance)
 		{
-			if(snake.xPos == snakeGraphics[graphicsBufIndex].xPos &&
-			   snake.yPos == snakeGraphics[graphicsBufIndex].yPos)
+			if(snake.xPos == (int) snakeGraphics[graphicsBufIndex].xPos &&
+			   snake.yPos == (int) snakeGraphics[graphicsBufIndex].yPos)
 			{
 				i = (SNAKE_MAX_LENGTH);
 				initSnake();
@@ -196,6 +243,21 @@ static void removeFoodItem(void)
 			graphicsBufIndex++;
 		}
 	}
+}
+
+static void printSnakeScore(void)
+{
+	(void) printf("Score: %u\n", score);
+}
+
+static void printSnakeInstructions(void)
+{
+	printf("Control snake: Arrow keys\nQuit: q\nPause: space\n");
+}
+
+static void printSnakeStatus(void)
+{
+	(void) printf("Last key pressed: %u\nPaused: %u\n", currKey, paused);
 }
 
 void initSnake(void)
@@ -241,8 +303,8 @@ void initSnake(void)
 	}
 
 	snake.length = 3u;
-	snake.xPos = 10u;
-	snake.yPos = 10u;
+	snake.xPos = 10;
+	snake.yPos = 10;
 	snake.direction = (SNAKE_DOWN);
 
 	snake.graphicsBufStartPos = graphicsIndex;
@@ -253,54 +315,56 @@ void initSnake(void)
 
 	renderSnake();
 
-	snakeFood.graphicsBufStartPos = snake.graphicsBufStartPos + (SNAKE_MAX_LENGTH) + 1u;
+	snakeFood.graphicsBufStartPos = snake.graphicsBufStartPos + (SNAKE_MAX_LENGTH);
 	snakeFood.noOfFoodItems = 0u;
 
 	srand(time(0));
+
+	score = 0u;
+
+	paused = 0u;
 }
 
 void snakeRun(void)
 {
-	unsigned char key = getKey();
-	if((INPUT_HANDLER_KEY_INVALID) != key)
+	if(0u == paused)
 	{
-		if(((SNAKE_DOWN) == snake.direction && key != (SNAKE_UP)) ||
-		   ((SNAKE_UP) == snake.direction && key != (SNAKE_DOWN)) ||
-		   ((SNAKE_RIGHT) == snake.direction && key != (SNAKE_LEFT)) ||
-		   ((SNAKE_LEFT) == snake.direction && key != (SNAKE_RIGHT)))
+		if(((snake.direction == (SNAKE_UP) ||
+			snake.direction == (SNAKE_DOWN)) &&
+			snakeRunCnt % (SNAKE_SPEED_X_FACTOR) == 0) ||
+			((snake.direction == (SNAKE_LEFT) ||
+			snake.direction == (SNAKE_RIGHT)) &&
+			snakeRunCnt % (SNAKE_SPEED_Y_FACTOR) == 0))
 		{
-			snake.direction = key;
+			handleSnakeKey();
+			renderSnake();
+			termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
+			printSnakeScore();
+			printSnakeInstructions();
+			printSnakeStatus();
+			checkWallCollision();
+			checkFoodCollision();
+			checkSnakeCollision();
 		}
 
-		if(key == (QUIT))
+		if(snakeRunCnt % (SNAKE_FOOD_ADD_CYCLE) == 0u)
 		{
-			gameStop();
+			generateFoodItem();
 		}
+
+		if(snakeRunCnt % (SNAKE_FOOD_REMOVE_CYCLE) == 0u)
+		{
+			removeFoodItem();
+		}
+
+		snakeRunCnt = (snakeRunCnt + 1u) % (SNAKE_TICK_CYCLE);
 	}
-
-	if(((snake.direction == (SNAKE_UP) ||
-		snake.direction == (SNAKE_DOWN)) &&
-		snakeRunCnt % (SNAKE_SPEED_X_FACTOR) == 0) ||
-		((snake.direction == (SNAKE_LEFT) ||
-		snake.direction == (SNAKE_RIGHT)) &&
-		snakeRunCnt % (SNAKE_SPEED_Y_FACTOR) == 0))
+	else
 	{
-		renderSnake();
+		handleSnakeKey();
 		termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
-		checkWallCollision();
-		checkFoodCollision();
-		checkSnakeCollision();
+		printSnakeScore();
+		printSnakeInstructions();
+		printSnakeStatus();
 	}
-
-	if(snakeRunCnt % (SNAKE_FOOD_ADD_CYCLE) == 0u)
-	{
-		generateFoodItem();
-	}
-
-	if(snakeRunCnt % (SNAKE_FOOD_REMOVE_CYCLE) == 0u)
-	{
-		removeFoodItem();
-	}
-
-	snakeRunCnt = (snakeRunCnt + 1u) % (SNAKE_TICK_CYCLE);
 }
