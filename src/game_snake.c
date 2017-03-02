@@ -17,12 +17,9 @@
 								(SNAKE_MAX_LENGTH) + \
 								(SNAKE_MAX_FOOD_ITEMS))
 
-#define SNAKE_SPEED_Y_FACTOR ((GRAPHICS_Y_SIZE) / 10u)
-#define SNAKE_SPEED_X_FACTOR ((GRAPHICS_X_SIZE) / 10u)
-
 #define SNAKE_TICK_CYCLE (10000u)
 
-#define SNAKE_FOOD_ADD_CYCLE    (50u)
+#define SNAKE_FOOD_ADD_CYCLE    (20u)
 #define SNAKE_FOOD_REMOVE_CYCLE (100u)
 
 #define SNAKE_UP    (65u)
@@ -31,7 +28,14 @@
 #define SNAKE_RIGHT (67u)
 #define SNAKE_PAUSE (32u)
 
+#define SNAKE_START_LENGTH (3u)
+#define SNAKE_START_X_POS  ((HORIZONTAL_WALL_LENGTH) / 2)
+#define SNAKE_START_Y_POS  (1)
+
 #define SNAKE_SCORE_PER_FOOD_ITEM (125u)
+
+#define SNAKE_GAME_OVER_ATE_SELF ("Snake ate self!")
+#define SNAKE_GAME_OVER_ATE_WALL ("Snake ate wall!")
 
 typedef struct Snake_
 {
@@ -55,7 +59,9 @@ static unsigned int snakeRunCnt;
 static SnakeFoodItem snakeFood = { 'Q', 0u, 0u };
 static unsigned int score;
 static unsigned char paused;
+static unsigned char gameOver;
 static unsigned char currKey;
+static char* gameOverReason;
 
 static void handleSnakeKey();
 static void renderSnake(void);
@@ -101,6 +107,8 @@ static void handleSnakeKey()
 	if(key == (SNAKE_PAUSE))
 	{
 		paused = !paused;
+		gameOver = 0u;
+		gameOverReason = 0u;
 	}
 }
 
@@ -145,6 +153,8 @@ static void checkWallCollision(void)
 	   snake.yPos <= 0 || snake.yPos >= (int) ((VERTICAL_WALL_LENGTH) - 1))
 	{
 		initSnake();
+		gameOver = 1u;
+		gameOverReason = (SNAKE_GAME_OVER_ATE_WALL);
 	}
 }
 
@@ -209,6 +219,8 @@ static void checkSnakeCollision(void)
 			{
 				i = (SNAKE_MAX_LENGTH);
 				initSnake();
+				gameOver = 1u;
+				gameOverReason = (SNAKE_GAME_OVER_ATE_SELF);
 			}
 		}
 
@@ -257,7 +269,25 @@ static void printSnakeInstructions(void)
 
 static void printSnakeStatus(void)
 {
-	(void) printf("Last key pressed: %u\nPaused: %u\n", currKey, paused);
+	(void) printf("Last key pressed: %u\n\n", currKey);
+	if(1u == paused || 1u == gameOver)
+	{
+		if(1u == gameOver)
+		{
+			(void) printf("Game over. ");
+			if(0u != gameOverReason)
+			{
+				(void) printf("%s", gameOverReason);
+			}
+			(void) printf("\n");
+		}
+		else
+		{
+			(void) printf("Game is paused. ");
+		}
+
+		(void) printf("Press space to start\n");
+	}
 }
 
 void initSnake(void)
@@ -302,9 +332,9 @@ void initSnake(void)
 		}
 	}
 
-	snake.length = 3u;
-	snake.xPos = 10;
-	snake.yPos = 10;
+	snake.length =    (SNAKE_START_LENGTH);
+	snake.xPos =      (SNAKE_START_X_POS);
+	snake.yPos =      (SNAKE_START_Y_POS);
 	snake.direction = (SNAKE_DOWN);
 
 	snake.graphicsBufStartPos = graphicsIndex;
@@ -322,30 +352,25 @@ void initSnake(void)
 
 	score = 0u;
 
-	paused = 0u;
+	paused = 1u;
+
+	gameOver = 0u;
+	gameOverReason = 0u;
 }
 
 void snakeRun(void)
 {
 	if(0u == paused)
 	{
-		if(((snake.direction == (SNAKE_UP) ||
-			snake.direction == (SNAKE_DOWN)) &&
-			snakeRunCnt % (SNAKE_SPEED_X_FACTOR) == 0) ||
-			((snake.direction == (SNAKE_LEFT) ||
-			snake.direction == (SNAKE_RIGHT)) &&
-			snakeRunCnt % (SNAKE_SPEED_Y_FACTOR) == 0))
-		{
-			handleSnakeKey();
-			renderSnake();
-			termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
-			printSnakeScore();
-			printSnakeInstructions();
-			printSnakeStatus();
-			checkWallCollision();
-			checkFoodCollision();
-			checkSnakeCollision();
-		}
+		handleSnakeKey();
+		renderSnake();
+		termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
+		printSnakeScore();
+		printSnakeInstructions();
+		printSnakeStatus();
+		checkWallCollision();
+		checkFoodCollision();
+		checkSnakeCollision();
 
 		if(snakeRunCnt % (SNAKE_FOOD_ADD_CYCLE) == 0u)
 		{

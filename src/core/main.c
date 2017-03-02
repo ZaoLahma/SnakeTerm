@@ -1,4 +1,4 @@
-#include "../inc/game_schd.h"
+#include "../../inc/game_schd.h"
 #include <stdio.h>
 #include <unistd.h>
 

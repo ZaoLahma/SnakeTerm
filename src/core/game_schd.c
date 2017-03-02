@@ -8,7 +8,7 @@
 static unsigned char running;
 
 #define SECOND_IN_USECONDS (1000000u)
-#define FRAMES_PER_SECOND  (20u)
+#define FRAMES_PER_SECOND  (10u)
 
 void gameMain()
 {
@@ -18,16 +18,20 @@ void gameMain()
 	
 	initSnake();
 	
-	uint64_t timeBefore;
-	uint64_t timeAfter;
+	uint64_t timeBefore = 0u;
+	uint64_t timeAfter =  0u;
+	uint64_t timeDiff =   0u;
 
 	while(1u == running)
 	{
 		timeBefore = getGameMicroSecTime();
 		snakeRun();
 		timeAfter = getGameMicroSecTime();
+
+		timeDiff = timeAfter - timeBefore;
+
 		usleep(((SECOND_IN_USECONDS) / (FRAMES_PER_SECOND)) -
-				(timeAfter - timeBefore));
+				timeDiff);
 	}
 	
 	stopInputHandler();

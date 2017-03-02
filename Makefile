@@ -2,7 +2,6 @@ CCOMMAND = gcc
 CFLAGS = -Wall -c -Wextra -g
 LINKARGS = -lpthread
 SOURCES = $(wildcard src/*.c src/*/*.c)
-TEST_SOURCES = $(wildcard test/*.c)
 OBJECTS = $(SOURCES:.c=.o)
 TEST_OBJECTS = $(TEST_SOURCES:.c=.o)
 INC_DIRS = -I./inc
