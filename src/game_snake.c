@@ -34,6 +34,17 @@
 
 #define SNAKE_SCORE_PER_FOOD_ITEM (125u)
 
+#define SNAKE_HEAD_APPEARANCE ('@')
+#define SNAKE_BODY_APPEARANCE ('*')
+#define SNAKE_FOOD_APPEARANCE ('Q')
+
+#define SNAKE_SCORE_TEXT       ("Score: %u\n\n")
+#define SNAKE_INSTR_TEXT       ("Control snake: Arrow keys\nQuit: q\nPause: space\n")
+#define SNAKE_KEY_PRESSED_TEXT ("Last key pressed: %u\n\n")
+#define SNAKE_GAME_OVER_TEXT   ("Game over. ")
+#define SNAKE_PAUSED_TEXT      ("Game is paused. ")
+#define SNAKE_START_TEXT       ("Press space to start\n")
+
 #define SNAKE_GAME_OVER_ATE_SELF ("Snake ate self!")
 #define SNAKE_GAME_OVER_ATE_WALL ("Snake ate wall!")
 
@@ -56,7 +67,7 @@ typedef struct SnakeFoodItem_
 static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
 static Snake snake;
 static unsigned int snakeRunCnt;
-static SnakeFoodItem snakeFood = { 'Q', 0u, 0u };
+static SnakeFoodItem snakeFood;
 static unsigned int score;
 static unsigned char paused;
 static unsigned char gameOver;
@@ -119,7 +130,7 @@ static void renderSnake(void)
 	for( ; snakeBodyIndex >= 1u; snakeBodyIndex--)
 	{
 		snakeGraphics[snake.graphicsBufStartPos + snakeBodyIndex] = snakeGraphics[snake.graphicsBufStartPos + snakeBodyIndex - 1u];
-		snakeGraphics[snake.graphicsBufStartPos + snakeBodyIndex].appearance = '*';
+		snakeGraphics[snake.graphicsBufStartPos + snakeBodyIndex].appearance = (SNAKE_BODY_APPEARANCE);
 	}
 
 	if((SNAKE_UP) == snake.direction)
@@ -142,7 +153,7 @@ static void renderSnake(void)
 		snake.xPos += 1;
 	}
 
-	snakeGraphics[snake.graphicsBufStartPos].appearance = '@';
+	snakeGraphics[snake.graphicsBufStartPos].appearance = (SNAKE_HEAD_APPEARANCE);
 	snakeGraphics[snake.graphicsBufStartPos].xPos = snake.xPos;
 	snakeGraphics[snake.graphicsBufStartPos].yPos = snake.yPos;
 }
@@ -212,7 +223,7 @@ static void checkSnakeCollision(void)
 
 	for( ; i < (SNAKE_MAX_LENGTH); ++i)
 	{
-		if('*' == snakeGraphics[graphicsBufIndex].appearance)
+		if((SNAKE_BODY_APPEARANCE) == snakeGraphics[graphicsBufIndex].appearance)
 		{
 			if(snake.xPos == (int) snakeGraphics[graphicsBufIndex].xPos &&
 			   snake.yPos == (int) snakeGraphics[graphicsBufIndex].yPos)
@@ -259,22 +270,31 @@ static void removeFoodItem(void)
 
 static void printSnakeScore(void)
 {
-	(void) printf("Score: %u\n", score);
+	const unsigned int numSpaces = ((GRAPHICS_X_SIZE) / 2u) -
+			                        (strlen((SNAKE_SCORE_TEXT)) / 2u);
+	unsigned int i = 0u;
+
+	for( ; i < numSpaces; ++i)
+	{
+		(void) printf(" ");
+	}
+
+	(void) printf((SNAKE_SCORE_TEXT), score);
 }
 
 static void printSnakeInstructions(void)
 {
-	printf("Control snake: Arrow keys\nQuit: q\nPause: space\n");
+	printf((SNAKE_INSTR_TEXT));
 }
 
 static void printSnakeStatus(void)
 {
-	(void) printf("Last key pressed: %u\n\n", currKey);
+	(void) printf((SNAKE_KEY_PRESSED_TEXT), currKey);
 	if(1u == paused || 1u == gameOver)
 	{
 		if(1u == gameOver)
 		{
-			(void) printf("Game over. ");
+			(void) printf((SNAKE_GAME_OVER_TEXT));
 			if(0u != gameOverReason)
 			{
 				(void) printf("%s", gameOverReason);
@@ -283,10 +303,10 @@ static void printSnakeStatus(void)
 		}
 		else
 		{
-			(void) printf("Game is paused. ");
+			(void) printf((SNAKE_PAUSED_TEXT));
 		}
 
-		(void) printf("Press space to start\n");
+		(void) printf((SNAKE_START_TEXT));
 	}
 }
 
@@ -339,12 +359,13 @@ void initSnake(void)
 
 	snake.graphicsBufStartPos = graphicsIndex;
 
-	snakeGraphics[snake.graphicsBufStartPos].appearance = '@';
+	snakeGraphics[snake.graphicsBufStartPos].appearance = (SNAKE_HEAD_APPEARANCE);
 	snakeGraphics[snake.graphicsBufStartPos].xPos = snake.xPos;
 	snakeGraphics[snake.graphicsBufStartPos].yPos = snake.yPos;
 
 	renderSnake();
 
+	snakeFood.appearance = (SNAKE_FOOD_APPEARANCE);
 	snakeFood.graphicsBufStartPos = snake.graphicsBufStartPos + (SNAKE_MAX_LENGTH);
 	snakeFood.noOfFoodItems = 0u;
 
