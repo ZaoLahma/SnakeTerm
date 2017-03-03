@@ -38,7 +38,7 @@
 #define SNAKE_BODY_APPEARANCE ('*')
 #define SNAKE_FOOD_APPEARANCE ('O')
 
-#define SNAKE_SCORE_TEXT       ("Score: %u\n\n")
+#define SNAKE_SCORE_TEXT       ("Score: %u | High score: %u\n\n")
 #define SNAKE_INSTR_TEXT       ("Control snake: Arrow keys\nQuit: q\nPause: space\n")
 #define SNAKE_KEY_PRESSED_TEXT ("Last key pressed: %u\n")
 #define SNAKE_GAME_OVER_TEXT   ("Game over. ")
@@ -69,6 +69,7 @@ static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
 static Snake snake;
 static SnakeFoodItem snakeFood;
 static unsigned int score;
+static unsigned int highScore = 0u;
 static unsigned char snakeRunCnt;
 static unsigned char paused;
 static unsigned char gameOver;
@@ -215,6 +216,10 @@ static void checkFoodCollision(void)
 					snakeFood.noOfFoodItems -= 1u;
 					snakeGraphics[graphicsBufIndex].appearance = ' ';
 					score += (SNAKE_SCORE_PER_FOOD_ITEM);
+					if(score > highScore)
+					{
+						highScore = score;
+					}
 				}
 			}
 
@@ -286,7 +291,7 @@ static void printSnakeScore(void)
 		(void) printf(" ");
 	}
 
-	(void) printf((SNAKE_SCORE_TEXT), score);
+	(void) printf((SNAKE_SCORE_TEXT), score, highScore);
 }
 
 static void printSnakeInstructions(void)
