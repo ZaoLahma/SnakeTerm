@@ -36,7 +36,7 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
     for(i = 0u; i < noOfEntities; ++i)
     {
         graphicsPos = graphics[i].yPos * (GRAPHICS_X_SIZE) + graphics[i].yPos + graphics[i].xPos;
-        if(' ' == graphicsBuf[graphicsPos] && '\n' != graphicsBuf[graphicsPos])
+        if(' ' == graphicsBuf[graphicsPos])
         {
         	graphicsBuf[graphicsPos] = graphics[i].appearance;
         }

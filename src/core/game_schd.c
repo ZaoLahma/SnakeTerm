@@ -4,11 +4,20 @@
 #include "../../inc/game_time.h"
 #include <unistd.h>
 #include <stdint.h>
+#include <stdio.h>
 
 static unsigned char running;
 
-#define SECOND_IN_USECONDS (1000000u)
-#define FRAMES_PER_SECOND  (10u)
+#define SECOND_IN_USECONDS    (1000000u)
+#define FRAMES_PER_SECOND     (10u)
+#define PERCENTAGE_MULTIPLIER (100u)
+
+static double cpuUtilizationPercentage;
+
+double getCpuUtilizationPercentage(void)
+{
+	return cpuUtilizationPercentage;
+}
 
 void gameMain()
 {
@@ -20,7 +29,7 @@ void gameMain()
 	
 	uint64_t timeBefore = 0u;
 	uint64_t timeAfter =  0u;
-	uint64_t timeDiff =   0u;
+	double timeDiff =   0u;
 
 	while(1u == running)
 	{
@@ -30,8 +39,11 @@ void gameMain()
 
 		timeDiff = timeAfter - timeBefore;
 
-		usleep(((SECOND_IN_USECONDS) / (FRAMES_PER_SECOND)) -
-				timeDiff);
+		useconds_t toSleep = (SECOND_IN_USECONDS) / (FRAMES_PER_SECOND);
+
+		cpuUtilizationPercentage = (PERCENTAGE_MULTIPLIER) * (timeDiff / toSleep);
+
+		usleep(toSleep - timeDiff);
 	}
 	
 	stopInputHandler();
