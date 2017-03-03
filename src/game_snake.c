@@ -172,48 +172,54 @@ static void checkWallCollision(void)
 
 static void generateFoodItem(void)
 {
-	unsigned int xPos = rand() % ((HORIZONTAL_WALL_LENGTH) - 2u) + 1u;
-	unsigned int yPos = rand() % ((VERTICAL_WALL_LENGTH) - 2u) + 1u;
-
-	unsigned int graphicsBufIndex = snakeFood.graphicsBufStartPos;
-	unsigned int i = 0u;
-
-	for( ; i < (SNAKE_MAX_FOOD_ITEMS); ++i)
+	if((SNAKE_MAX_FOOD_ITEMS) > snakeFood.noOfFoodItems)
 	{
-		if(' ' == snakeGraphics[graphicsBufIndex].appearance)
-		{
-			snakeFood.noOfFoodItems += 1u;
-			snakeGraphics[graphicsBufIndex].appearance = snakeFood.appearance;
-			snakeGraphics[graphicsBufIndex].xPos = xPos;
-			snakeGraphics[graphicsBufIndex].yPos = yPos;
-			i = (SNAKE_MAX_FOOD_ITEMS);
-		}
+		unsigned int xPos = rand() % ((HORIZONTAL_WALL_LENGTH) - 2u) + 1u;
+		unsigned int yPos = rand() % ((VERTICAL_WALL_LENGTH) - 2u) + 1u;
 
-		graphicsBufIndex++;
+		unsigned int graphicsBufIndex = snakeFood.graphicsBufStartPos;
+		unsigned int i = 0u;
+
+		for( ; i < (SNAKE_MAX_FOOD_ITEMS); ++i)
+		{
+			if(' ' == snakeGraphics[graphicsBufIndex].appearance)
+			{
+				snakeFood.noOfFoodItems += 1u;
+				snakeGraphics[graphicsBufIndex].appearance = snakeFood.appearance;
+				snakeGraphics[graphicsBufIndex].xPos = xPos;
+				snakeGraphics[graphicsBufIndex].yPos = yPos;
+				i = (SNAKE_MAX_FOOD_ITEMS);
+			}
+
+			graphicsBufIndex++;
+		}
 	}
 }
 
 static void checkFoodCollision(void)
 {
-	unsigned int graphicsBufIndex = snakeFood.graphicsBufStartPos;
-	unsigned int i = 0u;
-
-	for( ; i < (SNAKE_MAX_FOOD_ITEMS); ++i)
+	if(0u < snakeFood.noOfFoodItems)
 	{
-		if(' ' != snakeGraphics[graphicsBufIndex].appearance)
-		{
-			if(snake.xPos == (int) snakeGraphics[graphicsBufIndex].xPos &&
-			   snake.yPos == (int) snakeGraphics[graphicsBufIndex].yPos)
-			{
-				i = (SNAKE_MAX_FOOD_ITEMS);
-				snake.length += 1u;
-				snakeFood.noOfFoodItems -= 1u;
-				snakeGraphics[graphicsBufIndex].appearance = ' ';
-				score += (SNAKE_SCORE_PER_FOOD_ITEM);
-			}
-		}
+		unsigned int graphicsBufIndex = snakeFood.graphicsBufStartPos;
+		unsigned int i = 0u;
 
-		graphicsBufIndex++;
+		for( ; i < (SNAKE_MAX_FOOD_ITEMS); ++i)
+		{
+			if(snakeFood.appearance == snakeGraphics[graphicsBufIndex].appearance)
+			{
+				if(snake.xPos == (int) snakeGraphics[graphicsBufIndex].xPos &&
+				   snake.yPos == (int) snakeGraphics[graphicsBufIndex].yPos)
+				{
+					i = (SNAKE_MAX_FOOD_ITEMS);
+					snake.length += 1u;
+					snakeFood.noOfFoodItems -= 1u;
+					snakeGraphics[graphicsBufIndex].appearance = ' ';
+					score += (SNAKE_SCORE_PER_FOOD_ITEM);
+				}
+			}
+
+			graphicsBufIndex++;
+		}
 	}
 }
 
@@ -252,7 +258,7 @@ static void removeFoodItem(void)
 
 		for( ; i < (SNAKE_MAX_FOOD_ITEMS); ++i)
 		{
-			if(' ' != snakeGraphics[graphicsBufIndex].appearance)
+			if(snakeFood.appearance == snakeGraphics[graphicsBufIndex].appearance)
 			{
 				if(foodItemIndex == itemToRemove)
 				{
