@@ -36,7 +36,7 @@
 
 #define SNAKE_HEAD_APPEARANCE ('@')
 #define SNAKE_BODY_APPEARANCE ('*')
-#define SNAKE_FOOD_APPEARANCE ('Q')
+#define SNAKE_FOOD_APPEARANCE ('O')
 
 #define SNAKE_SCORE_TEXT       ("Score: %u\n\n")
 #define SNAKE_INSTR_TEXT       ("Control snake: Arrow keys\nQuit: q\nPause: space\n")
