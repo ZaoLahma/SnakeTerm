@@ -6,9 +6,9 @@
 
 typedef struct GraphicsEntity_
 {
+	unsigned char xPos;
+	unsigned char yPos;
 	char appearance;
-	unsigned int xPos;
-	unsigned int yPos;
 } GraphicsEntity;
 
 void termGraphicsInit(void);

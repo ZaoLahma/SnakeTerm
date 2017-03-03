@@ -16,7 +16,7 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
     unsigned int graphicsPos = 0;
 
     unsigned int i = 0u;
-    unsigned int x = 0u;
+    unsigned char x = 0u;
 
     /* Reset buffer and add all line breaks */
     memset(graphicsBuf, ' ', (GRAPHICS_BUF_SIZE));

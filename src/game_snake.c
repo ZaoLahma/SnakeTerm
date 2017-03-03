@@ -17,7 +17,7 @@
 								(SNAKE_MAX_LENGTH) + \
 								(SNAKE_MAX_FOOD_ITEMS))
 
-#define SNAKE_TICK_CYCLE (10000u)
+#define SNAKE_TICK_CYCLE (201u)
 
 #define SNAKE_FOOD_ADD_CYCLE    (20u)
 #define SNAKE_FOOD_REMOVE_CYCLE (100u)
@@ -60,16 +60,16 @@ typedef struct Snake_
 
 typedef struct SnakeFoodItem_
 {
-	char appearance;
 	unsigned int noOfFoodItems;
 	unsigned int graphicsBufStartPos;
+	char appearance;
 } SnakeFoodItem;
 
 static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
 static Snake snake;
-static unsigned int snakeRunCnt;
 static SnakeFoodItem snakeFood;
 static unsigned int score;
+static unsigned char snakeRunCnt;
 static unsigned char paused;
 static unsigned char gameOver;
 static unsigned char currKey;
