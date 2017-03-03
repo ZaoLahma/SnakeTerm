@@ -1,2 +1,2 @@
 # SnakeTerm
-This will eventually be a simple snake clone for the *NIX terminal
+This is a simple snake clone for the *NIX (tested on Mac OS X and Ubuntu) terminal.
