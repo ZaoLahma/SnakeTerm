@@ -2,6 +2,7 @@
 #include "../inc/term_graphics.h"
 #include "../inc/game_input_handler.h"
 #include "../inc/game_schd.h"
+#include "../inc/game_param.h"
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -69,7 +70,6 @@ static GraphicsEntity snakeGraphics[(NUM_GRAPHICAL_ENTITIES)];
 static Snake snake;
 static SnakeFoodItem snakeFood;
 static unsigned int score;
-static unsigned int highScore = 0u;
 static unsigned char snakeRunCnt;
 static unsigned char paused;
 static unsigned char gameOver;
@@ -216,9 +216,11 @@ static void checkFoodCollision(void)
 					snakeFood.noOfFoodItems -= 1u;
 					snakeGraphics[graphicsBufIndex].appearance = ' ';
 					score += (SNAKE_SCORE_PER_FOOD_ITEM);
+					unsigned int highScore;
+					getGameParam(GAME_PARAM_HIGH_SCORE, &highScore);
 					if(score > highScore)
 					{
-						highScore = score;
+						(void) setGameParam(GAME_PARAM_HIGH_SCORE, score);
 					}
 				}
 			}
@@ -291,6 +293,8 @@ static void printSnakeScore(void)
 		(void) printf(" ");
 	}
 
+	unsigned int highScore;
+	(void) getGameParam(GAME_PARAM_HIGH_SCORE, &highScore);
 	(void) printf((SNAKE_SCORE_TEXT), score, highScore);
 }
 
