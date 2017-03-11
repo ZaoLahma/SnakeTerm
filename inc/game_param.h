@@ -8,8 +8,9 @@ typedef enum GameParamId_
 } GameParamId;
 
 void initGameParam(void);
-unsigned int setGameParam(GameParamId paramId, unsigned int value);
-unsigned int getGameParam(GameParamId paramId, unsigned int* value);
+void setGameParam(GameParamId paramId, unsigned int value);
+void getGameParam(GameParamId paramId, unsigned int* value);
 void gameParamRun(void);
+void deInitGameParam(void);
 
 #endif

@@ -7,17 +7,16 @@
 #include <stdint.h>
 #include <stdio.h>
 
-static unsigned char running;
-
 #define SECOND_IN_USECONDS    (1000000u)
 #define FRAMES_PER_SECOND     (10u)
 #define PERCENTAGE_MULTIPLIER (100u)
 
-static double cpuUtilizationPercentage;
+static unsigned char running;
+static double cpuLoadPercentage;
 
-double getCpuUtilizationPercentage(void)
+double getCpuLoadPercentage(void)
 {
-	return cpuUtilizationPercentage;
+	return cpuLoadPercentage;
 }
 
 void gameMain()
@@ -43,12 +42,14 @@ void gameMain()
 
 		useconds_t toSleep = (SECOND_IN_USECONDS) / (FRAMES_PER_SECOND);
 
-		cpuUtilizationPercentage = (PERCENTAGE_MULTIPLIER) * (timeDiff / toSleep);
+		cpuLoadPercentage = (PERCENTAGE_MULTIPLIER) * (timeDiff / toSleep);
 
 		usleep(toSleep - timeDiff);
 	}
 	
 	stopInputHandler();
+
+	deInitGameParam();
 }
 
 void gameStop(void)

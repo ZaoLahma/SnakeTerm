@@ -45,7 +45,7 @@
 #define SNAKE_GAME_OVER_TEXT   ("Game over. ")
 #define SNAKE_PAUSED_TEXT      ("Game is paused. ")
 #define SNAKE_START_TEXT       ("Press space to start\n")
-#define SNAKE_CPU_UTIL_TEXT    ("CPU utilization: %.3f%%\n\n")
+#define SNAKE_CPU_UTIL_TEXT    ("CPU load: %.3f%%\n\n")
 
 #define SNAKE_GAME_OVER_ATE_SELF ("Snake ate self!")
 #define SNAKE_GAME_OVER_ATE_WALL ("Snake ate wall!")
@@ -306,7 +306,7 @@ static void printSnakeInstructions(void)
 static void printSnakeStatus(void)
 {
 	(void) printf((SNAKE_KEY_PRESSED_TEXT), currKey);
-	(void) printf((SNAKE_CPU_UTIL_TEXT), getCpuUtilizationPercentage());
+	(void) printf((SNAKE_CPU_UTIL_TEXT), getCpuLoadPercentage());
 	if(1u == paused || 1u == gameOver)
 	{
 		if(1u == gameOver)

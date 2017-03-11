@@ -16,6 +16,15 @@ static GameParamDescriptor paramDescriptors[] =
 
 static FILE* paramFile;
 
+static void flushParam(GameParamDescriptor* descriptor);
+
+static void flushParam(GameParamDescriptor* descriptor)
+{
+	fseek(paramFile, descriptor->paramByteAddress, SEEK_SET);
+	fwrite(&descriptor->ramValue, sizeof(descriptor->ramValue), 1, paramFile);
+	descriptor->fileValue = descriptor->ramValue;
+}
+
 void initGameParam(void)
 {
 	paramFile = fopen("gameParams.bin", "rb");
@@ -28,7 +37,7 @@ void initGameParam(void)
 		{
 			descriptor = &paramDescriptors[paramIndex];
 			fseek(paramFile, descriptor->paramByteAddress, SEEK_SET);
-			fread(&descriptor->fileValue, sizeof(descriptor->ramValue), 1, paramFile);
+			fread(&descriptor->fileValue, sizeof(descriptor->fileValue), 1, paramFile);
 			descriptor->ramValue = descriptor->fileValue;
 		}
 		fclose(paramFile);
@@ -39,22 +48,18 @@ void initGameParam(void)
 
 }
 
-unsigned int setGameParam(GameParamId paramId, unsigned int value)
+void setGameParam(GameParamId paramId, unsigned int value)
 {
 	GameParamDescriptor* descriptor = &paramDescriptors[paramId];
 
 	descriptor->ramValue = value;
-
-	return 0;
 }
 
-unsigned int getGameParam(GameParamId paramId, unsigned int* value)
+void getGameParam(GameParamId paramId, unsigned int* value)
 {
 	GameParamDescriptor* descriptor = &paramDescriptors[paramId];
 
 	*value = descriptor->ramValue;
-
-	return 0;
 }
 
 void gameParamRun(void)
@@ -67,9 +72,20 @@ void gameParamRun(void)
 		descriptor = &paramDescriptors[paramIndex];
 		if(descriptor->ramValue != descriptor->fileValue)
 		{
-			fseek(paramFile, descriptor->paramByteAddress, SEEK_SET);
-			fwrite(&descriptor->ramValue, sizeof(descriptor->ramValue), 1, paramFile);
-			descriptor->fileValue = descriptor->ramValue;
+			flushParam(descriptor);
 		}
 	}
+}
+
+void deInitGameParam(void)
+{
+	unsigned int paramIndex = 0u;
+	GameParamDescriptor* descriptor;
+
+	for( ; paramIndex < GAME_PARAM_NO_OF_PARAMS; ++paramIndex)
+	{
+		descriptor = &paramDescriptors[paramIndex];
+		flushParam(descriptor);
+	}
+	fclose(paramFile);
 }
