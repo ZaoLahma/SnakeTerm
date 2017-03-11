@@ -2,6 +2,7 @@
 #include "../../inc/game_input_handler.h"
 #include "../../inc/game_snake.h"
 #include "../../inc/game_time.h"
+#include "../../inc/game_param.h"
 #include <unistd.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -24,7 +25,7 @@ void gameMain()
 	running = 1u;
 	
 	initInputHandler();
-	
+	initGameParam();
 	initSnake();
 	
 	uint64_t timeBefore = 0u;
@@ -35,6 +36,7 @@ void gameMain()
 	{
 		timeBefore = getGameMicroSecTime();
 		snakeRun();
+		gameParamRun();
 		timeAfter = getGameMicroSecTime();
 
 		timeDiff = timeAfter - timeBefore;
