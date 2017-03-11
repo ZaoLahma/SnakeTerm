@@ -7,12 +7,15 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define SECOND_IN_USECONDS    (1000000u)
-#define FRAMES_PER_SECOND     (10u)
-#define PERCENTAGE_MULTIPLIER (100u)
+#define SECOND_IN_USECONDS      (1000000u)
+#define FRAMES_PER_SECOND       (10u)
+#define PERCENTAGE_MULTIPLIER   (100u)
+#define GAME_SECONDS_TICK_CYCLE (10u)
+#define GAME_PARAM_WRITE_CYCLE  (2u)
 
 static unsigned char running;
 static double cpuLoadPercentage;
+static unsigned int runCnt = 0u;
 
 double getCpuLoadPercentage(void)
 {
@@ -35,7 +38,10 @@ void gameMain()
 	{
 		timeBefore = getGameMicroSecTime();
 		snakeRun();
-		gameParamRun();
+		if(0u == runCnt % ((SECOND_IN_USECONDS) * (GAME_PARAM_WRITE_CYCLE)))
+		{
+			gameParamRun();
+		}
 		timeAfter = getGameMicroSecTime();
 
 		timeDiff = timeAfter - timeBefore;
@@ -45,6 +51,8 @@ void gameMain()
 		cpuLoadPercentage = (PERCENTAGE_MULTIPLIER) * (timeDiff / toSleep);
 
 		usleep(toSleep - timeDiff);
+
+		runCnt = (runCnt + 1u) % (GAME_SECONDS_TICK_CYCLE);
 	}
 	
 	stopInputHandler();
