@@ -51,7 +51,7 @@ void gameMain()
 		timeBefore = getGameMicroSecTime();
 
 		snakeRun();
-		if(0u == runCnt % ((SECOND_IN_USECONDS) * (GAME_PARAM_WRITE_CYCLE)))
+		if(0u == runCnt % ((FRAMES_PER_SECOND) * (GAME_PARAM_WRITE_CYCLE)))
 		{
 			gameParamRun();
 		}
@@ -73,7 +73,7 @@ void gameMain()
 
 		usleep(toSleep - timeDiff);
 
-		runCnt = (runCnt + 1u) % (GAME_SECONDS_TICK_CYCLE);
+		runCnt = (runCnt + 1u) % ((FRAMES_PER_SECOND) * (GAME_SECONDS_TICK_CYCLE));
 	}
 	
 	stopInputHandler();
