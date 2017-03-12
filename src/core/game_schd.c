@@ -10,16 +10,28 @@
 #define SECOND_IN_USECONDS      (1000000u)
 #define FRAMES_PER_SECOND       (10u)
 #define PERCENTAGE_MULTIPLIER   (100u)
+#define CPU_LOAD_MULTIPLIER     (1000.0f)
 #define GAME_SECONDS_TICK_CYCLE (10u)
 #define GAME_PARAM_WRITE_CYCLE  (2u)
 
 static unsigned char running;
-static double cpuLoadPercentage;
+static float cpuLoadPercentage;
 static unsigned int runCnt = 0u;
 
-double getCpuLoadPercentage(void)
+float getCpuLoadPercentage(void)
 {
 	return cpuLoadPercentage;
+}
+
+float getCpuLoadMaxPercentage(void)
+{
+	unsigned int cpuMaxLoad = 0u;
+
+	getGameParam(GAME_PARAM_MAX_CPU_LOAD, &cpuMaxLoad);
+
+	float cpuMaxLoadPercentage = (float)(cpuMaxLoad / (CPU_LOAD_MULTIPLIER));
+
+	return cpuMaxLoadPercentage;
 }
 
 void gameMain()
@@ -37,18 +49,27 @@ void gameMain()
 	while(1u == running)
 	{
 		timeBefore = getGameMicroSecTime();
+
 		snakeRun();
 		if(0u == runCnt % ((SECOND_IN_USECONDS) * (GAME_PARAM_WRITE_CYCLE)))
 		{
 			gameParamRun();
 		}
-		timeAfter = getGameMicroSecTime();
 
+		timeAfter = getGameMicroSecTime();
 		timeDiff = timeAfter - timeBefore;
 
 		useconds_t toSleep = (SECOND_IN_USECONDS) / (FRAMES_PER_SECOND);
 
 		cpuLoadPercentage = (PERCENTAGE_MULTIPLIER) * (timeDiff / toSleep);
+		unsigned int cpuMaxLoad = 0u;
+		getGameParam(GAME_PARAM_MAX_CPU_LOAD, &cpuMaxLoad);
+		if((unsigned int)(cpuLoadPercentage * (CPU_LOAD_MULTIPLIER)) > cpuMaxLoad)
+		{
+			cpuMaxLoad = (unsigned int)(cpuLoadPercentage * (CPU_LOAD_MULTIPLIER));
+
+			setGameParam(GAME_PARAM_MAX_CPU_LOAD, cpuMaxLoad);
+		}
 
 		usleep(toSleep - timeDiff);
 

@@ -11,7 +11,8 @@ typedef struct GameParamDescriptor_
 
 static GameParamDescriptor paramDescriptors[] =
 {
-		{GAME_PARAM_HIGH_SCORE, 0, 0, 0}
+		{GAME_PARAM_HIGH_SCORE, 0, 0, 0x0},
+		{GAME_PARAM_MAX_CPU_LOAD, 0, 0, 0x4}
 };
 
 static FILE* paramFile;

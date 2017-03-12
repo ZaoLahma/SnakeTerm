@@ -4,6 +4,7 @@
 typedef enum GameParamId_
 {
 	GAME_PARAM_HIGH_SCORE,
+	GAME_PARAM_MAX_CPU_LOAD,
 	GAME_PARAM_NO_OF_PARAMS
 } GameParamId;
 

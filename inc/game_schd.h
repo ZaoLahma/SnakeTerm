@@ -1,7 +1,8 @@
 #ifndef HEADER_GAME_SCHD
 #define HEADER_GAME_SCHD
 
-double getCpuLoadPercentage(void);
+float getCpuLoadPercentage(void);
+float getCpuLoadMaxPercentage(void);
 
 void gameMain(void);
 
