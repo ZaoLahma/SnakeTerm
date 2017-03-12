@@ -1,8 +1,8 @@
 #include "../inc/game_snake.h"
-#include "../inc/term_graphics.h"
 #include "../inc/game_input_handler.h"
 #include "../inc/game_schd.h"
 #include "../inc/game_param.h"
+#include "../inc/game_term_graphics.h"
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>

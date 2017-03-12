@@ -1,4 +1,4 @@
-#include "../../inc/term_graphics.h"
+#include "../../inc/game_term_graphics.h"
 #include <stdio.h>
 #include <string.h>
 
