@@ -3,6 +3,7 @@
 #include "../../inc/game_snake.h"
 #include "../../inc/game_time.h"
 #include "../../inc/game_param.h"
+#include "../../inc/game_state.h"
 #include <unistd.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -38,6 +39,7 @@ void gameMain()
 {
 	running = 1u;
 	
+	initGameState();
 	initInputHandler();
 	initGameParam();
 	initSnake();

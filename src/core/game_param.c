@@ -1,4 +1,5 @@
 #include "../../inc/game_param.h"
+#include "../../inc/game_state.h"
 #include <stdio.h>
 
 typedef struct GameParamDescriptor_
@@ -46,6 +47,13 @@ void initGameParam(void)
 			descriptor->ramValue = descriptor->fileValue;
 		}
 		fclose(paramFile);
+
+		setGameState(GAME_SNAKE_RUNNING);
+	}
+	else
+	{
+		/* TODO: Set state configure_running */
+		setGameState(GAME_SNAKE_RUNNING);
 	}
 
 

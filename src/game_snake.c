@@ -3,6 +3,7 @@
 #include "../inc/game_schd.h"
 #include "../inc/game_param.h"
 #include "../inc/game_term_graphics.h"
+#include "../inc/game_state.h"
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -404,36 +405,44 @@ void initSnake(void)
 
 void snakeRun(void)
 {
-	if(0u == paused)
+
+	GameState currState;
+
+	getGameState(&currState);
+
+	if(GAME_SNAKE_RUNNING == currState)
 	{
-		handleSnakeKey();
-		renderSnake();
-		termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
-		printSnakeScore();
-		printSnakeInstructions();
-		printSnakeStatus();
-		checkWallCollision();
-		checkFoodCollision();
-		checkSnakeCollision();
-
-		if(snakeRunCnt % (SNAKE_FOOD_ADD_CYCLE) == 0u)
+		if(0u == paused)
 		{
-			generateFoodItem();
-		}
+			handleSnakeKey();
+			renderSnake();
+			termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
+			printSnakeScore();
+			printSnakeInstructions();
+			printSnakeStatus();
+			checkWallCollision();
+			checkFoodCollision();
+			checkSnakeCollision();
 
-		if(snakeRunCnt % (SNAKE_FOOD_REMOVE_CYCLE) == 0u)
+			if(snakeRunCnt % (SNAKE_FOOD_ADD_CYCLE) == 0u)
+			{
+				generateFoodItem();
+			}
+
+			if(snakeRunCnt % (SNAKE_FOOD_REMOVE_CYCLE) == 0u)
+			{
+				removeFoodItem();
+			}
+
+			snakeRunCnt = (snakeRunCnt + 1u) % (SNAKE_TICK_CYCLE);
+		}
+		else
 		{
-			removeFoodItem();
+			handleSnakeKey();
+			termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
+			printSnakeScore();
+			printSnakeInstructions();
+			printSnakeStatus();
 		}
-
-		snakeRunCnt = (snakeRunCnt + 1u) % (SNAKE_TICK_CYCLE);
-	}
-	else
-	{
-		handleSnakeKey();
-		termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
-		printSnakeScore();
-		printSnakeInstructions();
-		printSnakeStatus();
 	}
 }
