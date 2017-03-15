@@ -291,9 +291,9 @@ static void removeFoodItem(void)
 
 static void printSnakeScore(void)
 {
-	const unsigned int numSpaces = ((GRAPHICS_X_SIZE) / 2u) -
-			                        (strlen((SNAKE_SCORE_TEXT)) / 2u);
-	unsigned int i = 0u;
+	const int numSpaces = ((GRAPHICS_X_SIZE) / 2u) -
+			               (strlen((SNAKE_SCORE_TEXT)) / 2u);
+	int i = 0u;
 
 	for( ; i < numSpaces; ++i)
 	{

@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 #define SECOND_IN_USECONDS      (1000000u)
-#define FRAMES_PER_SECOND       (10u)
+#define FRAMES_PER_SECOND       (7u)
 #define PERCENTAGE_MULTIPLIER   (100u)
 #define CPU_LOAD_MULTIPLIER     (1000.0f)
 #define GAME_SECONDS_TICK_CYCLE (10u)
@@ -117,7 +117,12 @@ void gameMain()
 			setGameParam(GAME_PARAM_MAX_CPU_LOAD, cpuMaxLoad);
 		}
 
-		usleep(toSleep - timeDiff);
+		if(toSleep - timeDiff >= 0)
+		{
+			toSleep -= timeDiff;
+		}
+
+		usleep(toSleep);
 
 		runCnt = (runCnt + 1u) % ((FRAMES_PER_SECOND) * (GAME_SECONDS_TICK_CYCLE));
 	}
