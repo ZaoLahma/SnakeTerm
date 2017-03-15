@@ -23,10 +23,6 @@
 #define SNAKE_FOOD_ADD_CYCLE    (20u)
 #define SNAKE_FOOD_REMOVE_CYCLE (100u)
 
-#define SNAKE_UP    (65u)
-#define SNAKE_DOWN  (66u)
-#define SNAKE_LEFT  (68u)
-#define SNAKE_RIGHT (67u)
 #define SNAKE_PAUSE (32u)
 
 #define SNAKE_START_LENGTH (3u)
@@ -74,6 +70,11 @@ static unsigned char snakeRunCnt;
 static unsigned char paused;
 static unsigned char gameOver;
 static unsigned char currKey;
+static unsigned char SNAKE_UP;
+static unsigned char SNAKE_DOWN;
+static unsigned char SNAKE_LEFT;
+static unsigned char SNAKE_RIGHT;
+
 static char* gameOverReason;
 
 static void handleSnakeKey();
@@ -330,6 +331,11 @@ static void printSnakeStatus(void)
 void initSnake(void)
 {
 	termGraphicsInit();
+
+	getGameParam(GAME_PARAM_UP_KEY, (unsigned int*)&SNAKE_UP);
+	getGameParam(GAME_PARAM_DOWN_KEY, (unsigned int*)&SNAKE_DOWN);
+	getGameParam(GAME_PARAM_LEFT_KEY, (unsigned int*)&SNAKE_LEFT);
+	getGameParam(GAME_PARAM_RIGHT_KEY, (unsigned int*)&SNAKE_RIGHT);
 
 	/* Set up the initial play field */
 	
