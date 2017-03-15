@@ -1,4 +1,4 @@
-#include "../../inc/game_input_handler.h"
+#include "../../inc/game_input.h"
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
@@ -17,7 +17,9 @@ static void resetTermios(void);
 
 static pthread_t inputThread;
 
-void* inputHandlerMain(void* arg)
+static void* gameInputMain(void*);
+
+static void* gameInputMain(void* arg)
 {
 	while(1u == running)
 	{
@@ -52,18 +54,18 @@ static void resetTermios(void)
   tcsetattr(STDIN_FILENO, TCSANOW, &old_term);
 }
 
-void initInputHandler(void)
+void initGameInput(void)
 {	
 	initTermios();
 	
-	(void)pthread_create(&inputThread, 0u, &inputHandlerMain, 0u);
+	(void)pthread_create(&inputThread, 0u, &gameInputMain, 0u);
 
 	currKey = (INPUT_HANDLER_KEY_INVALID);
 	
 	running = 1u;
 }
 
-void stopInputHandler(void)
+void deInitGameInput(void)
 {
 	running = 0u;
 	pthread_join(inputThread, 0u);

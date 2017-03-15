@@ -1,7 +1,7 @@
 #include "../../inc/game_configure.h"
-#include "../../inc/game_input_handler.h"
 #include "../../inc/game_param.h"
 #include "../../inc/game_state.h"
+#include "../../inc/game_input.h"
 #include <stdio.h>
 
 typedef enum GameConfigureState_

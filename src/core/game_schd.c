@@ -1,10 +1,10 @@
 #include "../../inc/game_schd.h"
-#include "../../inc/game_input_handler.h"
 #include "../../inc/game_snake.h"
 #include "../../inc/game_time.h"
 #include "../../inc/game_param.h"
 #include "../../inc/game_state.h"
 #include "../../inc/game_configure.h"
+#include "../../inc/game_input.h"
 #include <unistd.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -57,7 +57,7 @@ void gameMain()
 		{
 			case GAME_SYS_INIT:
 			{
-				initInputHandler();
+				initGameInput();
 				initGameParam();
 			}
 			break;
@@ -115,7 +115,7 @@ void gameMain()
 		runCnt = (runCnt + 1u) % ((FRAMES_PER_SECOND) * (GAME_SECONDS_TICK_CYCLE));
 	}
 	
-	stopInputHandler();
+	deInitGameInput();
 
 	deInitGameParam();
 }
