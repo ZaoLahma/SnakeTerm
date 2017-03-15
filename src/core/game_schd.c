@@ -86,6 +86,13 @@ void gameMain()
 			}
 			break;
 
+			case GAME_QUIT:
+			{
+				running = 0u;
+				(void) printf("\n");
+			}
+			break;
+
 			default:
 			break;
 		}
@@ -118,9 +125,4 @@ void gameMain()
 	deInitGameInput();
 
 	deInitGameParam();
-}
-
-void gameStop(void)
-{
-	running = 0u;
 }

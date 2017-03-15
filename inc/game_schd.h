@@ -6,6 +6,4 @@ float getCpuLoadMaxPercentage(void);
 
 void gameMain(void);
 
-void gameStop(void);
-
 #endif

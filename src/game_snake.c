@@ -1,9 +1,9 @@
 #include "../inc/game_snake.h"
-#include "../inc/game_schd.h"
 #include "../inc/game_param.h"
 #include "../inc/game_term_graphics.h"
 #include "../inc/game_state.h"
 #include "../inc/game_input.h"
+#include "../inc/game_schd.h"
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -116,7 +116,7 @@ static void handleSnakeKey()
 
 	if(key == (QUIT))
 	{
-		gameStop();
+		setGameState(GAME_QUIT);
 	}
 
 	if(key == (SNAKE_PAUSE))

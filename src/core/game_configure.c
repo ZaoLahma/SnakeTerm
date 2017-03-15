@@ -97,4 +97,8 @@ void gameConfigureRun(void)
 			break;
 		}
 	}
+	else if((QUIT) == key)
+	{
+		setGameState(GAME_QUIT);
+	}
 }
