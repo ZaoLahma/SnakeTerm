@@ -4,7 +4,7 @@ static GameState currState;
 
 void initGameState(void)
 {
-	currState = GAME_STATE_INIT;
+	currState = GAME_SYS_INIT;
 }
 
 void getGameState(GameState* state)

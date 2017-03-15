@@ -43,10 +43,10 @@ void termGraphicsDraw(GraphicsEntity graphics[], unsigned int noOfEntities)
     }
 
     /* Finally clear the screen and print the graphics */
-    printf("\n\033c");
+    (void) printf("\n\033c");
     graphicsPos = 0u;
     for(graphicsPos = 0u; graphicsPos < GRAPHICS_BUF_SIZE; ++graphicsPos)
     {
-    	printf("%c", graphicsBuf[graphicsPos]);
+    	(void) printf("%c", graphicsBuf[graphicsPos]);
     }
 }

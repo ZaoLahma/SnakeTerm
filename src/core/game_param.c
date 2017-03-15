@@ -48,12 +48,11 @@ void initGameParam(void)
 		}
 		fclose(paramFile);
 
-		setGameState(GAME_SNAKE_RUNNING);
+		setGameState(GAME_SYS_SETUP_COMPLETE);
 	}
 	else
 	{
-		/* TODO: Set state configure_running */
-		setGameState(GAME_SNAKE_RUNNING);
+		setGameState(GAME_CONFIGURE_RUNNING);
 	}
 
 

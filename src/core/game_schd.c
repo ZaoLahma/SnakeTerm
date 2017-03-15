@@ -4,6 +4,7 @@
 #include "../../inc/game_time.h"
 #include "../../inc/game_param.h"
 #include "../../inc/game_state.h"
+#include "../../inc/game_configure.h"
 #include <unistd.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -40,9 +41,6 @@ void gameMain()
 	running = 1u;
 	
 	initGameState();
-	initInputHandler();
-	initGameParam();
-	initSnake();
 	
 	uint64_t timeBefore = 0u;
 	uint64_t timeAfter =  0u;
@@ -52,7 +50,46 @@ void gameMain()
 	{
 		timeBefore = getGameMicroSecTime();
 
-		snakeRun();
+		GameState currState;
+		getGameState(&currState);
+
+		switch(currState)
+		{
+			case GAME_SYS_INIT:
+			{
+				initInputHandler();
+				initGameParam();
+			}
+			break;
+
+			case GAME_SYS_SETUP_COMPLETE:
+			{
+				setGameState(GAME_SNAKE_INIT);
+			}
+			break;
+
+			case GAME_CONFIGURE_RUNNING:
+			{
+				gameConfigureRun();
+			}
+			break;
+
+			case GAME_SNAKE_INIT:
+			{
+				initSnake();
+			}
+			break;
+
+			case GAME_SNAKE_RUNNING:
+			{
+				snakeRun();
+			}
+			break;
+
+			default:
+			break;
+		}
+
 		if(0u == runCnt % ((FRAMES_PER_SECOND) * (GAME_PARAM_WRITE_CYCLE)))
 		{
 			gameParamRun();

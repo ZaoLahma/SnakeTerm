@@ -37,7 +37,7 @@
 #define SNAKE_FOOD_APPEARANCE ('O')
 
 #define SNAKE_SCORE_TEXT       ("Score: %u | High score: %u\n\n")
-#define SNAKE_INSTR_TEXT       ("Control snake: Arrow keys\nQuit: q\nPause: space\n")
+#define SNAKE_INSTR_TEXT       ("Configure game: c\nQuit: q\nPause: space\n")
 #define SNAKE_KEY_PRESSED_TEXT ("Last key pressed: %u\n")
 #define SNAKE_GAME_OVER_TEXT   ("Game over. ")
 #define SNAKE_PAUSED_TEXT      ("Game is paused. ")
@@ -124,6 +124,11 @@ static void handleSnakeKey()
 		paused = !paused;
 		gameOver = 0u;
 		gameOverReason = 0u;
+	}
+
+	if(key == (CONFIGURE))
+	{
+		setGameState(GAME_CONFIGURE_RUNNING);
 	}
 }
 
@@ -401,48 +406,42 @@ void initSnake(void)
 
 	gameOver = 0u;
 	gameOverReason = 0u;
+
+	setGameState(GAME_SNAKE_RUNNING);
 }
 
 void snakeRun(void)
 {
-
-	GameState currState;
-
-	getGameState(&currState);
-
-	if(GAME_SNAKE_RUNNING == currState)
+	if(0u == paused)
 	{
-		if(0u == paused)
+		handleSnakeKey();
+		renderSnake();
+		termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
+		printSnakeScore();
+		printSnakeInstructions();
+		printSnakeStatus();
+		checkWallCollision();
+		checkFoodCollision();
+		checkSnakeCollision();
+
+		if(snakeRunCnt % (SNAKE_FOOD_ADD_CYCLE) == 0u)
 		{
-			handleSnakeKey();
-			renderSnake();
-			termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
-			printSnakeScore();
-			printSnakeInstructions();
-			printSnakeStatus();
-			checkWallCollision();
-			checkFoodCollision();
-			checkSnakeCollision();
-
-			if(snakeRunCnt % (SNAKE_FOOD_ADD_CYCLE) == 0u)
-			{
-				generateFoodItem();
-			}
-
-			if(snakeRunCnt % (SNAKE_FOOD_REMOVE_CYCLE) == 0u)
-			{
-				removeFoodItem();
-			}
-
-			snakeRunCnt = (snakeRunCnt + 1u) % (SNAKE_TICK_CYCLE);
+			generateFoodItem();
 		}
-		else
+
+		if(snakeRunCnt % (SNAKE_FOOD_REMOVE_CYCLE) == 0u)
 		{
-			handleSnakeKey();
-			termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
-			printSnakeScore();
-			printSnakeInstructions();
-			printSnakeStatus();
+			removeFoodItem();
 		}
+
+		snakeRunCnt = (snakeRunCnt + 1u) % (SNAKE_TICK_CYCLE);
+	}
+	else
+	{
+		handleSnakeKey();
+		termGraphicsDraw(snakeGraphics, (NUM_GRAPHICAL_ENTITIES));
+		printSnakeScore();
+		printSnakeInstructions();
+		printSnakeStatus();
 	}
 }
