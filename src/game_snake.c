@@ -406,8 +406,6 @@ void initSnake(void)
 
 	gameOver = 0u;
 	gameOverReason = 0u;
-
-	setGameState(GAME_SNAKE_RUNNING);
 }
 
 void snakeRun(void)

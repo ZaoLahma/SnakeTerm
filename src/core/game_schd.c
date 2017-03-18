@@ -59,6 +59,7 @@ void gameMain()
 			{
 				initGameInput();
 				initGameParam();
+				setGameState(GAME_SYS_SETUP_COMPLETE);
 			}
 			break;
 
@@ -77,6 +78,7 @@ void gameMain()
 			case GAME_SNAKE_INIT:
 			{
 				initSnake();
+				setGameState(GAME_SNAKE_RUNNING);
 			}
 			break;
 

@@ -14,10 +14,10 @@ static GameParamDescriptor paramDescriptors[] =
 {
 		{GAME_PARAM_HIGH_SCORE, 0, 0, 0x0},
 		{GAME_PARAM_MAX_CPU_LOAD, 0, 0, 0x4},
-		{GAME_PARAM_UP_KEY, 65, 65, 0x8},
-		{GAME_PARAM_DOWN_KEY, 66, 66, 0xc},
-		{GAME_PARAM_LEFT_KEY, 68, 68, 0x10},
-		{GAME_PARAM_LEFT_KEY, 67, 67, 0x14}
+		{GAME_PARAM_UP_KEY, 65, 0, 0x8},
+		{GAME_PARAM_DOWN_KEY, 66, 0, 0xc},
+		{GAME_PARAM_LEFT_KEY, 68, 0, 0x10},
+		{GAME_PARAM_RIGHT_KEY, 67, 0, 0x14}
 };
 
 static FILE* paramFile;
@@ -27,8 +27,8 @@ static void flushParam(GameParamDescriptor* descriptor);
 static void flushParam(GameParamDescriptor* descriptor)
 {
 	fseek(paramFile, descriptor->paramByteAddress, SEEK_SET);
-	fwrite(&descriptor->ramValue, sizeof(descriptor->ramValue), 1, paramFile);
 	descriptor->fileValue = descriptor->ramValue;
+	fwrite(&descriptor->fileValue, sizeof(descriptor->fileValue), 1, paramFile);
 }
 
 void initGameParam(void)
@@ -47,14 +47,7 @@ void initGameParam(void)
 			descriptor->ramValue = descriptor->fileValue;
 		}
 		fclose(paramFile);
-
-		setGameState(GAME_SYS_SETUP_COMPLETE);
 	}
-	else
-	{
-		setGameState(GAME_CONFIGURE_RUNNING);
-	}
-
 
 	paramFile = fopen("gameParams.bin", "wb");
 
